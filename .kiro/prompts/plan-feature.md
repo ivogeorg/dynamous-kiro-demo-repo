@@ -292,7 +292,7 @@ Use information-dense keywords for clarity:
 
 ## TESTING STRATEGY
 
-<Define testing approach based on project's test framework and patterns discovered in during research>
+<Define testing approach based on project's test framework and patterns discovered during research>
 
 ### Unit Tests
 
