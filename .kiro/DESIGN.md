@@ -1,0 +1,1 @@
+Documents the technical architecture, including sequence diagrams, system configuration, data flow, and database schemas or API endpoints. Any digested files under `.kiro/design/` will be included and extended here.
