@@ -45,4 +45,11 @@ The typical workflow consists of the following steps:
 8. Step (7) can be iterated until the user is satisfied. At this time, a downloadable DXF file is generated.
 
 ## Success Criteria
-1. 
+1. Multi-agentic automatic annotation:
+   1. Percentage semantically correct proposals.
+   2. Accuracy of proposed feature masks.
+   3. Diversity of prosals for user-selected regions.
+2. Speed and responsiveness.
+3. Accuracy over the whole ortomosaic (Target: >90%).
+4. Cumulative time of vectorization, from GeoTFF+LAS upload to DXF download, including automatic and manual phases (Target: 6 hours).
+5. Cost efficiency of automatic phase, including training, fine-tuning, and inference.
