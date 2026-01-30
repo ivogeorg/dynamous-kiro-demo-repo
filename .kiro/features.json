@@ -74,9 +74,9 @@
           "moscow": "Should-have"
         }
       ],
-      "status": "not-started",
-      "started_date": null,
-      "completed_date": null,
+      "status": "completed",
+      "started_date": "2026-01-30T20:49:06Z",
+      "completed_date": "2026-01-30T20:50:10Z",
       "testable_outcome": "Page loads with split layout: map container on left, DXF pane on right",
       "design_source": "A-Human-in-the-Loop-Framework (Section 2.2: State Management)"
     },
@@ -484,7 +484,7 @@
       "status": "not-started",
       "started_date": null,
       "completed_date": null,
-      "testable_outcome": "Click feature → highlights in map + DXF pane, download button appears, clicking downloads DXF file",
+      "testable_outcome": "Click feature \u2192 highlights in map + DXF pane, download button appears, clicking downloads DXF file",
       "design_source": "A-Human-in-the-Loop-Framework (Section 5.3: Pixel-Perfect Editing Tools)"
     }
   },

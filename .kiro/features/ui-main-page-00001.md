@@ -3,9 +3,9 @@ id: ui-main-page-00001
 name: Main Application Page
 version: Demo
 moscow: Must-have
-status: not-started
-started_date: None
-completed_date: None
+status: completed
+started_date: 2026-01-30T20:49:06Z
+completed_date: 2026-01-30T20:50:10Z
 ---
 
 # Main Application Page
