@@ -270,11 +270,46 @@ def main():
             print(f"• {fid}: Waiting for {', '.join(incomplete)}")
     
     print("\n" + "━" * 70)
-    print(f"\n💡 Ready to plan? Run: @plan-feature {rec_id}")
-    print(f"💡 Or select different feature from list above\n")
 
 if __name__ == '__main__':
     main()
 ```
 
 Execute this script to show the development horizon and recommended next feature.
+
+## User Interaction
+
+After displaying the horizon, **prompt the user for selection:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT FEATURE TO PLAN:
+
+  [R] Recommended: [feature-id]
+  [1-N] Other ready features (by number from list above)
+  [Q] Quit (return to prompt)
+
+Your choice:
+```
+
+**Handle user input:**
+- **"R" or "r" or empty (Enter)**: Use recommended feature
+- **Number (1-N)**: Use corresponding feature from "OTHER READY FEATURES" list
+- **"Q" or "q"**: Exit without planning
+
+**After valid selection:**
+1. Extract selected feature ID
+2. Display confirmation:
+   ```
+   📝 CREATING PLAN FOR: [feature-id] - [Feature Name]
+   ```
+3. **Automatically invoke @plan-feature**:
+   ```
+   @plan-feature [feature-id]
+   ```
+
+**Invalid input:**
+```
+❌ Invalid selection. Please enter R, a number (1-N), or Q.
+```
