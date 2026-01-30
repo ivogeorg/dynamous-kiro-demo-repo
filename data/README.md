@@ -57,3 +57,34 @@ git lfs pull
 3. **Frontend**: Visualization
    - Loads: `full_ortho.tif` (COG streaming)
    - Overlays: `dxf/output.dxf`
+
+## Setup
+
+`powershell`  
+### 1. Pull latest
+`git pull`  
+
+### 2. Upload orthomosaic
+Copy `full_ortho.tif` to `data/orthomosaic/`
+
+### 3. Run ML pipeline
+```bash
+cd backend/scripts/demo
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements-ml.txt
+pip install git+https://github.com/facebookresearch/segment-anything-2.git
+```
+### 4. Cut region and run pipeline
+```bash
+python cut_region.py ..\..\data\orthomosaic\full_ortho.tif ..\..\data\orthomosaic\demo_cutout.tif 2048
+python run_ml_pipeline.py ..\..\data\orthomosaic\demo_cutout.tif ..\..\data\masks
+```
+
+### 5. Commit masks
+```bash
+git add data/masks/
+git commit -m "feat: Add ML-generated masks"
+git push
+```
