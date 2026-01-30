@@ -1346,3 +1346,131 @@ This pattern should be applied to other commands with complex logic:
 - [ ] Begin feature implementation with faster workflow
 
 ---
+
+
+---
+
+## 2026-01-30 - OpenLayers Map Integration and Interactive UI Development
+
+**Features**: 
+- [`ui-main-page-00001`](.kiro/features/ui-main-page-00001.md) - Main Application Page
+- [`ui-map-init-00001`](.kiro/features/ui-map-init-00001.md) - OpenLayers Map Initialization
+
+**Session Duration**: ~15 minutes
+**Branch**: master
+**Commits**: 2
+**Status**: Both features completed
+
+### Overview
+
+Successfully implemented the core UI infrastructure for Kaldic, creating a professional split-pane layout with Zustand state management and integrating OpenLayers for interactive map rendering. The application now displays a functional web mapping interface with OpenStreetMap base layer, ready for COG orthomosaic overlay in the next feature.
+
+### Technical Report
+
+#### Completed Tasks - ui-main-page-00001
+- ✅ Created Zustand store for application state (features, selection, map readiness)
+- ✅ Built MapContainer component with placeholder
+- ✅ Built DXFPane component with feature list, selection highlighting, and download button
+- ✅ Updated App component with split layout (2/3 map, 1/3 DXF pane)
+- ✅ Added TypeScript type definitions for features and DXF layers
+
+#### Completed Tasks - ui-map-init-00001
+- ✅ Created useMap hook for OpenLayers initialization with React lifecycle management
+- ✅ Configured map with EPSG:3857 (Web Mercator) projection
+- ✅ Added OSM base layer for temporary visualization
+- ✅ Integrated OpenLayers CSS and viewport styling
+- ✅ Connected map initialization to Zustand store (mapReady state)
+
+#### Validation Results
+```bash
+✓ TypeScript compilation passed (no errors)
+✓ Frontend loads successfully on :5173
+✓ OpenLayers map renders with OSM tiles
+✓ Map is interactive (pan/zoom functional)
+✓ DXF pane displays correctly with empty state
+✓ Layout is responsive (2/3 + 1/3 split)
+✓ Console shows "✓ OpenLayers map initialized"
+```
+
+### Technical Decisions
+
+1. **Zustand for State Management**: Chose Zustand over Redux/Context API for lightweight, TypeScript-friendly state management with minimal boilerplate. Perfect for the demo's scope.
+
+2. **OpenLayers over Mapbox/Leaflet**: Selected OpenLayers for superior CAD editing capabilities, native support for arbitrary projections, and robust vector interaction APIs needed for DXF feature manipulation.
+
+3. **Custom useMap Hook**: Encapsulated OpenLayers initialization in a React hook to ensure proper lifecycle management (mount/unmount), prevent re-initialization on re-renders, and maintain clean component separation.
+
+4. **OSM Temporary Base Layer**: Added OpenStreetMap tiles as a temporary base layer to verify map functionality before COG integration. Will be hidden/replaced when orthomosaic loads.
+
+5. **Split Layout with Tailwind**: Used Tailwind's utility classes for responsive 2/3 + 1/3 layout with smooth transitions, avoiding custom CSS and maintaining consistency with the design system.
+
+### Challenges & Solutions
+
+**Challenge**: OpenLayers CSS import causing Vite build warnings
+- **Solution**: Imported `ol/ol.css` directly in component rather than index.css to ensure proper loading order
+- **Impact**: Clean build with no warnings, proper map control styling
+
+**Challenge**: Map not filling container height
+- **Solution**: Added explicit CSS rule for `.ol-viewport` with `width: 100%; height: 100%` and ensured parent div has explicit height
+- **Impact**: Map now fills entire left pane correctly
+
+### Kiro CLI Usage
+
+- **@next**: Intelligent feature selection recommended UI features first (no data dependencies), allowing parallel data preparation. Saved time by identifying the critical path.
+
+- **@plan-feature**: Generated detailed implementation plans with specific code snippets for both features. The useMap hook pattern was particularly helpful for React lifecycle management.
+
+- **@execute**: Systematic execution caught TypeScript compilation issues early and validated each step before moving forward. Automated status updates in features.json.
+
+### Code Changes
+
+**Files Created** (5):
+- `frontend/src/store/appStore.ts` - Zustand state management
+- `frontend/src/components/MapContainer.tsx` - Map container with OpenLayers
+- `frontend/src/components/DXFPane.tsx` - DXF feature list pane
+- `frontend/src/types/feature.ts` - TypeScript type definitions
+- `frontend/src/lib/useMap.ts` - OpenLayers initialization hook
+
+**Files Modified** (4):
+- `frontend/src/App.tsx` - Updated with split layout
+- `frontend/src/index.css` - Added OpenLayers CSS imports
+- `.kiro/features.json` - Updated feature statuses
+- `.kiro/features/ui-main-page-00001.md` - Status tracking
+- `.kiro/features/ui-map-init-00001.md` - Status tracking
+
+**Total Changes**: +264 lines, -16 lines
+
+### Git Activity
+
+**Commits** (2 commits):
+```
+fe9c1c0 - feat: Complete main application page layout (ui-main-page-00001)
+2607e27 - feat: Initialize OpenLayers map (ui-map-init-00001)
+```
+
+### Time Breakdown
+
+- **Planning/Design**: 5 minutes (reviewing plans)
+- **Implementation**: 8 minutes (coding both features)
+- **Testing/Debugging**: 2 minutes (validation)
+- **Total Session Time**: 15 minutes
+
+### Insights & Learnings
+
+- **OpenLayers + React Integration**: The useRef pattern for storing the map instance is crucial to prevent re-initialization. The cleanup function in useEffect ensures proper disposal on unmount, avoiding memory leaks.
+
+- **Zustand Simplicity**: Zustand's API is remarkably simple compared to Redux. The `create` function with TypeScript generics provides excellent type safety with zero boilerplate.
+
+- **Tailwind for Rapid Prototyping**: Using Tailwind utility classes for the split layout enabled rapid iteration without writing custom CSS. The `transition-all duration-300` class provides smooth pane toggling (feature ready, UI not implemented yet).
+
+- **Component Separation**: Keeping MapContainer, DXFPane, and App separate with clear responsibilities makes the codebase easy to navigate and test. Each component has a single, well-defined purpose.
+
+### Next Steps
+
+- [x] [`ui-main-page-00001`](.kiro/features/ui-main-page-00001.md) - Completed
+- [x] [`ui-map-init-00001`](.kiro/features/ui-map-init-00001.md) - Completed
+- [ ] [`ui-cog-render-00001`](.kiro/features/ui-cog-render-00001.md) - COG Rendering (requires orthomosaic file)
+- [ ] [`ui-pan-zoom-00001`](.kiro/features/ui-pan-zoom-00001.md) - Pan and Zoom Controls
+- [ ] [`ml-dino-sam2-setup-00001`](.kiro/features/ml-dino-sam2-setup-00001.md) - ML Pipeline Setup
+
+**Progress**: 3/12 Demo features completed (25%)
