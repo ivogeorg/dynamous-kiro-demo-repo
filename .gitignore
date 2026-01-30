@@ -26,5 +26,10 @@ Thumbs.db
 backend/output/
 *.dxf
 
+# Large input files (not in repo - too large for GitHub LFS)
+data/orthomosaic/*.tif
+data/pointcloud/*.las
+data/pointcloud/*.laz
+
 # Logs
 *.log

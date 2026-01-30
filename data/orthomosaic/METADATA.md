@@ -7,6 +7,11 @@
 - **Format**: BigTIFF (little-endian)
 - **Companion Files**: AVONDALE_ORTHO.prj, AVONDALE_ORTHO.tfw
 
+**⚠️ Note**: Original .tif and .las files are NOT in the repository due to GitHub LFS 2GB file size limit. 
+- Store original files locally in `data/orthomosaic/` and `data/pointcloud/`
+- COG tiles (generated) are committed instead
+- For judges: Download original files from [provide link] or use included COG tiles
+
 ## Coordinate Reference System (CRS)
 
 **EPSG Code**: 6405
