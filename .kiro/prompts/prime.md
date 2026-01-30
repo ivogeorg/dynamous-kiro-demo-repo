@@ -70,4 +70,41 @@ Provide a concise summary covering:
 - Recent changes or development focus (if git repository)
 - Any immediate observations or concerns
 
+### Development Horizon (if features.json exists)
+
+**Check for feature graph:**
+```bash
+if [ -f "features.json" ]; then
+  echo "Feature graph found"
+fi
+```
+
+**If features.json exists, show horizon summary:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 DEVELOPMENT HORIZON SUMMARY
+
+Current Sprint: [Demo|Version 1|Version 2]
+Progress: [N] completed, [M] in-progress, [P] ready to implement
+
+Ready Features: [P]
+Blocked Features: [X] (waiting on dependencies)
+
+Next Recommended: [feature-id] - [Feature Name]
+  Priority: [Must-have] ([Sprint])
+  Why: [Brief reason - e.g., "Foundational, unblocks 3 features"]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Ready to select next feature? Run: @next
+
+```
+
+**If features.json doesn't exist:**
+```
+💡 No feature graph found. Run @design-digest to create feature roadmap.
+```
+
 **Make this summary easy to scan - use bullet points and clear headers.**
