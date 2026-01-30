@@ -19,6 +19,7 @@
 7. [2026-01-30 - Feature Graph Relocation and Missing Files Generation](#2026-01-30---feature-graph-relocation-and-missing-files-generation)
 8. [2026-01-30 - Interactive Feature Selection Enhancement](#2026-01-30---interactive-feature-selection-enhancement)
 9. [2026-01-30 - Complete Workflow Automation and Vite Setup Fix](#2026-01-30---complete-workflow-automation-and-vite-setup-fix)
+10. [2026-01-30 - Critical Fix: Interactive Commands Break Automation](#2026-01-30---critical-fix-interactive-commands-break-automation)
 
 ---
 
@@ -1131,5 +1132,140 @@ From 6 steps (3 manual commands) to 3 steps (2 simple prompts). 50% reduction in
 - [ ] Verify non-interactive Vite setup works
 - [ ] Begin actual feature implementation
 - [ ] Monitor for any other workflow friction points
+
+---
+
+## 2026-01-30 - Critical Fix: Interactive Commands Break Automation
+
+**Session Duration**: 0.2 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Critical Bug Fix
+**Time Lost**: ~0.5 hours (implementation session broken)
+
+### Overview
+
+Discovered critical workflow blocker: interactive commands (npm create, git commit without -m) hang execution because prompts don't display to user. User blindly presses Enter without seeing what they're accepting, causing dangerous state corruption. Fixed by adding prominent warnings in @plan-feature and resetting corrupted state.
+
+### Technical Report
+
+#### The Problem
+
+**Symptom**: Implementation session hung on "installing create-vite@8.2.0" with no visible progress or prompts.
+
+**Root Cause**: When @execute runs shell commands through Kiro CLI, **interactive prompts don't pass through to the user**. Commands like:
+- `npm create vite` (asks for project name, template, etc.)
+- `git commit` (opens editor)
+- `npm init` (asks for package details)
+
+These wait for user input, but the user sees nothing. They blindly press Enter, accepting unknown defaults or causing errors.
+
+**Impact**:
+- Frontend directory deleted (npm create vite tried to overwrite existing directory)
+- Feature status corrupted (marked in-progress but implementation failed)
+- Plan file contained dangerous interactive commands
+- ~30 minutes of implementation time lost debugging
+
+#### The Solution
+
+**1. Added Critical Warning to @plan-feature**
+
+New section at top of Mission:
+```
+⚠️ CRITICAL: NO INTERACTIVE COMMANDS
+
+Plans must ONLY contain non-interactive commands.
+
+FORBIDDEN:
+- npm create / npm init (without -y)
+- git commit (without -m)
+- Any command with interactive prompts
+
+REQUIRED:
+- Use -y, --yes, --no-interaction, --force flags
+- Create files manually instead of scaffolding
+- Break interactive commands into explicit steps
+```
+
+**2. Reset Corrupted State**
+- Deleted bad plan: `.kiro/plans/infra-dev-setup-00001-plan.md`
+- Reset feature status: `not-started` in both `.kiro/features.json` and feature file
+- Cleared `started_date` timestamp
+- Recreated `frontend/` directory structure
+
+**3. Updated Feature File**
+Already had non-interactive instructions in `infra-dev-setup-00001.md` Notes section, but plan was generated before that update.
+
+#### Files Modified
+- `.kiro/prompts/plan-feature.md` (added critical warning)
+- `.kiro/features.json` (reset status)
+- `.kiro/plans/infra-dev-setup-00001-plan.md` (deleted)
+- `frontend/` (recreated directory structure)
+
+### Time Breakdown
+
+- **Debugging hanging execution**: 0.1 hours
+- **Root cause analysis**: 0.05 hours
+- **Fix implementation**: 0.05 hours
+- **Total Session Time**: 0.2 hours
+- **Implementation Time Lost**: ~0.5 hours
+
+### Insights & Learnings
+
+- **Interactive commands are invisible in automation**: This is a fundamental limitation of running shell commands through AI agents. Prompts don't display, making it impossible for users to provide informed input.
+
+- **Blind Enter-pressing is dangerous**: Without seeing prompts, users can't know what they're accepting. This can delete files, corrupt state, or accept unwanted defaults.
+
+- **Scaffolding tools assume empty directories**: Tools like `create-vite` expect to create new directories. When structure already exists (our `frontend/src/`), they fail or prompt for overwrite.
+
+- **Prevention is critical**: This issue cost 30+ minutes of implementation time in a 24-hour sprint. Adding the warning upfront prevents future occurrences.
+
+- **Manual setup is safer for automation**: Explicitly creating files (package.json, vite.config.ts) is more verbose but eliminates interactive prompts and gives full control.
+
+### Forbidden Commands Reference
+
+**Never use in plans:**
+```bash
+# FORBIDDEN - Interactive
+npm create vite
+npm init
+git commit
+yarn create
+pnpm create
+cargo new (without --vcs none)
+rails new (without --skip-*)
+```
+
+**Use instead:**
+```bash
+# SAFE - Non-interactive
+npm init -y
+git commit -m "message"
+npm install <packages>
+# Manual file creation
+cat > package.json << 'EOF'
+{...}
+EOF
+```
+
+### Recovery Checklist
+
+When interactive command breaks execution:
+- [ ] Identify which command hung (check plan file)
+- [ ] Kill execution session
+- [ ] Check for corrupted state (deleted files, wrong status)
+- [ ] Reset feature status to previous state
+- [ ] Delete bad plan file
+- [ ] Restore any deleted files/directories
+- [ ] Regenerate plan with non-interactive approach
+- [ ] Verify plan before executing
+
+### Next Steps
+
+- [ ] Test regenerated plan in implementation session
+- [ ] Verify all commands are non-interactive
+- [ ] Monitor for any other interactive command issues
+- [ ] Document any additional forbidden commands discovered
+- [ ] Begin actual feature implementation with safe plan
 
 ---
