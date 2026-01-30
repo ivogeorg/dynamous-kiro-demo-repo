@@ -1,0 +1,487 @@
+{
+  "features": {
+    "infra-dev-setup-00001": {
+      "name": "Development Environment Setup",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the developer initializes the project, the system shall provide a complete development environment with Vite, React 18, TypeScript, and FastAPI configured and ready for development",
+      "dependencies": [],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Initialize Vite project with React 18 and TypeScript template",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Configure TypeScript with strict mode and path aliases",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Set up FastAPI backend with Python 3.11+ virtual environment",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Install core dependencies (OpenLayers, geotiff.js, PyTorch, Transformers)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Configure CORS for local development",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Both frontend and backend start without errors, hot reload works",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 2: Architectural Foundations)"
+    },
+    "ui-main-page-00001": {
+      "name": "Main Application Page",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the application loads, the system shall display a single-page interface with map container and DXF pane ready for content",
+      "dependencies": ["infra-dev-setup-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Create main App component with layout (map + DXF pane)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Set up Zustand store for application state",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Create map container div with proper sizing",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Create DXF pane component (empty for now)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Add TailwindCSS for styling",
+          "moscow": "Should-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Page loads with split layout: map container on left, DXF pane on right",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 2.2: State Management)"
+    },
+    "ui-map-init-00001": {
+      "name": "OpenLayers Map Initialization",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the main page loads, the system shall initialize an OpenLayers map with proper projection and base configuration",
+      "dependencies": ["ui-main-page-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Create MapContext with OpenLayers map instance",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Configure map with EPSG:3857 (Web Mercator) projection",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Set initial view (center and zoom level)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Add base layer (OSM or blank for demo)",
+          "moscow": "Should-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Integrate map with React lifecycle (mount/unmount)",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "OpenLayers map renders in container, no console errors",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 2.1: The Case for OpenLayers)"
+    },
+    "ui-cog-render-00001": {
+      "name": "Cloud-Optimized GeoTIFF Rendering",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the map is initialized, the system shall load and render the hardcoded COG file with tiled streaming and proper geospatial positioning",
+      "dependencies": ["ui-map-init-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Configure geotiff.js with Web Worker pool for decoding",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Create GeoTIFF source pointing to data/demo.tif",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Add WebGLTile layer for GPU-accelerated rendering",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Configure tile size (256x256) and overview levels",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Fit map view to GeoTIFF extent on load",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Orthomosaic displays correctly positioned, tiles load progressively as user pans",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 3: High-Fidelity COG Implementation)"
+    },
+    "ui-pan-zoom-00001": {
+      "name": "Pan and Zoom Controls",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the user interacts with the map, the system shall provide smooth pan (drag) and zoom (scroll/pinch) controls",
+      "dependencies": ["ui-cog-render-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Enable default OpenLayers interactions (DragPan, MouseWheelZoom)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Add zoom controls UI (+ / - buttons)",
+          "moscow": "Should-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Configure zoom constraints (min/max levels)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Test performance with large COG file",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "User can pan by dragging, zoom with mouse wheel, map remains responsive",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 2.1: OpenLayers interaction primitives)"
+    },
+    "ml-dino-sam2-setup-00001": {
+      "name": "Grounding DINO and SAM 2 Integration",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When the backend starts, the system shall load Grounding DINO and SAM 2 models with proper VRAM management and be ready for inference",
+      "dependencies": ["infra-dev-setup-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Install Transformers, PyTorch, and model dependencies",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Load Grounding DINO model (Tiny variant for speed)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Load SAM 2 model with memory management configuration",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Implement sliding window memory reset for SAM 2 (prevent OOM)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Test inference on sample image, verify VRAM usage <40GB",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Models load successfully, inference runs without OOM errors, VRAM monitored",
+      "design_source": "A-Hybrid-AI-Geometric-Pipeline (Section 2.1: Foundation Models)"
+    },
+    "ml-road-centerline-00001": {
+      "name": "Road Centerline Detection",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When processing the orthomosaic, the system shall detect road centerlines using Grounding DINO prompts and SAM 2 segmentation",
+      "dependencies": ["ml-dino-sam2-setup-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Create text prompt for Grounding DINO: 'road centerline, road center'",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Run Grounding DINO to get bounding boxes for road regions",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Use bounding boxes as prompts for SAM 2 segmentation",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Post-process masks: filter by confidence, remove small artifacts",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Store masks with metadata (confidence, bbox, class)",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Road centerlines detected in test image, masks saved, confidence >0.7",
+      "design_source": "A-Hybrid-AI-Geometric-Pipeline (Section 2.1.1: Grounding DINO, 2.1.2: SAM 2)"
+    },
+    "ml-road-curb-00001": {
+      "name": "Road Curb Detection",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When processing the orthomosaic, the system shall detect road curbs using Grounding DINO prompts and SAM 2 segmentation",
+      "dependencies": ["ml-dino-sam2-setup-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Create text prompt for Grounding DINO: 'road curb, curb edge, road edge'",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Run Grounding DINO to get bounding boxes for curb regions",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Use bounding boxes as prompts for SAM 2 segmentation",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Post-process masks: filter by confidence, remove noise",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Store masks with metadata (confidence, bbox, class)",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Road curbs detected in test image, masks saved, confidence >0.7",
+      "design_source": "A-Hybrid-AI-Geometric-Pipeline (Section 2.1.1: Grounding DINO, 2.1.2: SAM 2)"
+    },
+    "geom-vectorize-roads-00001": {
+      "name": "Vectorize Road Masks to CAD Primitives",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When masks are generated, the system shall convert road centerline and curb masks into clean line/polyline CAD primitives",
+      "dependencies": ["ml-road-centerline-00001", "ml-road-curb-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Implement mask skeletonization for centerlines (OpenCV)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Apply Douglas-Peucker simplification to reduce vertices",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Extract curb edges using contour detection",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Convert pixel coordinates to world coordinates (geospatial)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Create LineString geometries for each feature",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Masks converted to clean polylines, vertex count reduced by 80%+, coordinates in proper CRS",
+      "design_source": "A-Hybrid-AI-Geometric-Pipeline (Section 3: OpenCV & Geometric Refinement)"
+    },
+    "geom-dxf-generate-00001": {
+      "name": "DXF File Generation",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When vectorization is complete, the system shall generate a valid DXF file with road features on appropriate layers",
+      "dependencies": ["geom-vectorize-roads-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Initialize ezdxf document with proper units and CRS",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Create layers: 'ROAD_CENTERLINE' and 'ROAD_CURB'",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Add LWPOLYLINE entities for each road feature",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Set proper styling (color, lineweight) per layer",
+          "moscow": "Should-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Save DXF file to backend storage",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "DXF file generated, opens in AutoCAD/QGIS without errors, features on correct layers",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 5: DXF Interoperability)"
+    },
+    "ui-dxf-overlay-00001": {
+      "name": "DXF Overlay Rendering",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When DXF is generated, the system shall render CAD vectors as overlay on orthomosaic and display in DXF pane",
+      "dependencies": ["geom-dxf-generate-00001", "ui-pan-zoom-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Fetch DXF data from backend API",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Parse DXF using dxf-parser in frontend",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Create OpenLayers VectorLayer for DXF features",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Style features by layer (centerline=red, curb=blue)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Populate DXF pane with feature list (layer, type, ID)",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "DXF vectors overlay on orthomosaic, DXF pane shows feature list, colors match layers",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 5.1: DXF Parsing and Entity Normalization)"
+    },
+    "ui-feature-select-00001": {
+      "name": "Feature Selection and Highlighting",
+      "version": "Demo",
+      "moscow": "Must-have",
+      "description": "When user clicks a feature on map or in DXF pane, the system shall highlight it in both views and show download button",
+      "dependencies": ["ui-dxf-overlay-00001"],
+      "tasks": [
+        {
+          "id": "task-001",
+          "description": "Add OpenLayers Select interaction for vector layer",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-002",
+          "description": "Implement click handler: highlight selected feature on map",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-003",
+          "description": "Sync selection to DXF pane (highlight corresponding entry)",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-004",
+          "description": "Show download DXF button when any feature selected",
+          "moscow": "Must-have"
+        },
+        {
+          "id": "task-005",
+          "description": "Implement download: trigger DXF file download from backend",
+          "moscow": "Must-have"
+        }
+      ],
+      "status": "not-started",
+      "started_date": null,
+      "completed_date": null,
+      "testable_outcome": "Click feature → highlights in map + DXF pane, download button appears, clicking downloads DXF file",
+      "design_source": "A-Human-in-the-Loop-Framework (Section 5.3: Pixel-Perfect Editing Tools)"
+    }
+  },
+  "metadata": {
+    "generated": "2026-01-29T22:35:00Z",
+    "design_docs_processed": [
+      "A-Human-in-the-Loop-Framework-for-AI-Generated-CAD-Correction.md",
+      "A-Hybrid-AI-Geometric-Pipeline-for-Automated-Geospatial-Feature-Extraction-and-Vectorization.md"
+    ],
+    "conflicts_resolved": 0,
+    "technologies_validated": [
+      "Grounding DINO",
+      "SAM 2",
+      "OpenLayers 10.x",
+      "React 18.x",
+      "KPConv",
+      "PointNeXt"
+    ],
+    "total_features": 12,
+    "demo_features": 12,
+    "v1_features": 0,
+    "v2_features": 0
+  }
+}
