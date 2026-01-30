@@ -7,13 +7,13 @@ argument-hint: "[feature-name-or-description]"
 
 ## Mission
 
-Add a new feature to an existing feature roadmap (features.json), create its specification file, update dependencies, and ensure @next can discover it properly.
+Add a new feature to an existing feature roadmap (.kiro/features.json), create its specification file, update dependencies, and ensure @next can discover it properly.
 
 **Core Principle**: Maintain graph integrity. New features must fit cleanly into dependency structure without breaking existing features or creating cycles.
 
 ## Prerequisites
 
-- `features.json` must exist (run @design-digest first if not)
+- `.kiro/features.json` must exist (run @design-digest first if not)
 - `.kiro/features/` directory must exist
 - Feature name or description provided as argument
 
@@ -60,7 +60,7 @@ Follow naming convention: `[major-section]-[detail]-[ddddd]`
 - `data`: Data processing, storage
 
 **Counter logic:**
-1. Read features.json
+1. Read .kiro/features.json
 2. Find all features matching `[major-section]-[detail]-*`
 3. Increment highest counter by 1
 4. Format as 5 digits (e.g., 00001, 00002)
@@ -74,7 +74,7 @@ Follow naming convention: `[major-section]-[detail]-[ddddd]`
 
 **1. Analyze Existing Features**
 
-Read features.json and identify:
+Read .kiro/features.json and identify:
 - Features this new feature depends on (prerequisites)
 - Features that might depend on this new feature (if inserted mid-graph)
 
@@ -82,7 +82,7 @@ Read features.json and identify:
 
 Validate:
 - No circular dependencies
-- All dependencies exist in features.json
+- All dependencies exist in .kiro/features.json
 - Dependencies are in same or earlier version
 
 **3. Determine Graph Position**
@@ -221,11 +221,11 @@ Generated: .kiro/features/[feature-id].md
 Review and approve? (yes/edit/regenerate)
 ```
 
-### Phase 4: Update features.json
+### Phase 4: Update .kiro/features.json
 
 **1. Add Feature Entry**
 
-Insert new feature into features.json:
+Insert new feature into .kiro/features.json:
 ```json
 {
   "features": {
@@ -312,7 +312,7 @@ Dependencies: [N dependencies]
 Tasks: [M tasks]
 
 Files updated:
-  • features.json (feature added, metadata updated)
+  • .kiro/features.json (feature added, metadata updated)
   • .kiro/features/[feature-id].md (specification created)
 
 Graph integrity: ✅ Validated (no cycles, all deps exist)
@@ -332,7 +332,7 @@ Feature successfully integrated into roadmap!
 ```
 ⚠️  FEATURE ID CONFLICT
 
-Feature [feature-id] already exists in features.json.
+Feature [feature-id] already exists in .kiro/features.json.
 
 Options:
 1. Generate new ID with incremented counter
@@ -374,7 +374,7 @@ Confirm this is intentional? (yes/add-deps/cancel)
 
 - [ ] Feature ID generated following naming convention
 - [ ] Feature specification file created in .kiro/features/
-- [ ] features.json updated with new feature
+- [ ] .kiro/features.json updated with new feature
 - [ ] Metadata counts updated correctly
 - [ ] No circular dependencies introduced
 - [ ] All dependencies exist and are valid

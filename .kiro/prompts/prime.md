@@ -70,18 +70,18 @@ Provide a concise summary covering:
 - Recent changes or development focus (if git repository)
 - Any immediate observations or concerns
 
-### Development Horizon (if features.json exists)
+### Development Horizon (if .kiro/features.json exists)
 
 **Check for feature graph:**
 ```bash
-if [ -f "features.json" ]; then
+if [ -f ".kiro/features.json" ]; then
   echo "Feature graph found - analyzing roadmap"
 fi
 ```
 
-**If features.json exists, analyze and show horizon summary:**
+**If .kiro/features.json exists, analyze and show horizon summary:**
 
-1. **Read features.json** and parse feature data
+1. **Read .kiro/features.json** and parse feature data
 2. **Calculate statistics:**
    - Total features by version (Demo/V1/V2)
    - Features by status (completed/in-progress/not-started/blocked)
@@ -123,7 +123,7 @@ Next Recommended: [feature-id] - [Feature Name]
 
 ```
 
-**If features.json doesn't exist:**
+**If .kiro/features.json doesn't exist:**
 ```
 💡 No feature graph found. Run @design-digest to create feature roadmap.
 ```

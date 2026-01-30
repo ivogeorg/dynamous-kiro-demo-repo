@@ -411,7 +411,7 @@ Generated: .kiro/steering/product-enhanced.md
 Enrichments added:
   • Technology architecture (validated stack)
   • Detailed feature type descriptions
-  • Development roadmap (from features.json)
+  • Development roadmap (from .kiro/features.json)
   • Performance targets (from design docs)
   • Technical constraints (VRAM, GPU, etc.)
 
@@ -443,7 +443,7 @@ Your choice:
 ✅ FEATURE ROADMAP COMPLETE
 
 Generated:
-- features.json (priority graph with [N] features)
+- .kiro/features.json (priority graph with [N] features)
 - .kiro/features/ ([N] individual feature files)
 - Draft steering document updates
 - Enriched product.md
@@ -458,11 +458,11 @@ This will create a Product Requirements Document with:
 Generate PRD? (yes/no/later)
 ```
 
-If yes, invoke `@create-prd` with context from features.json.
+If yes, invoke `@create-prd` with context from .kiro/features.json.
 
 ## Output Artifacts
 
-### 1. Priority Graph: `features.json`
+### 1. Priority Graph: `.kiro/features.json`
 Flat dependency graph with all features, tasks, and metadata.
 
 ### 2. Feature Files: `.kiro/features/[feature-id].md`

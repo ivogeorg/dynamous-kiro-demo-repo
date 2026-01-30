@@ -4,325 +4,277 @@ description: "Intelligent feature selector - shows development horizon and recom
 
 # Next: Smart Feature Selection
 
-## Mission
-
 Analyze the feature dependency graph, calculate the development horizon (ready-to-implement features), and provide intelligent recommendations based on sprint priorities, dependencies, complexity, and milestone proximity.
 
-**Core Principle**: Remove decision paralysis. Show what's ready, recommend what's optimal, let user choose confidently.
+## Implementation
 
-## Prerequisites
+Run the feature analysis script:
 
-- `features.json` must exist (run @design-digest first)
-- At least one feature should be ready (no dependencies or all dependencies completed)
+```python
+#!/usr/bin/env python3
+"""Analyze feature graph and recommend next feature."""
 
-## Process
+import json
+import sys
+from collections import defaultdict
 
-### Phase 1: Load and Analyze Feature Graph
+def load_features():
+    """Load .kiro/features.json."""
+    try:
+        with open('.kiro/features.json', 'r') as f:
+            return json.load(f)['features']
+    except FileNotFoundError:
+        print("❌ ERROR: .kiro/features.json not found\n")
+        print("Run @design-digest first to generate feature roadmap.\n")
+        sys.exit(1)
 
-**1. Read features.json**
-```bash
-# Load feature graph
-# Parse all features and their metadata
-```
-
-**2. Calculate Development Horizon**
-
-**Horizon Definition**: Features that are ready to implement
-- Status = "not-started" OR "blocked" (if dependencies now complete)
-- All dependencies have status = "completed"
-- Immediately actionable
-
-**Algorithm**:
-```
-for each feature in features.json:
-  if feature.status == "completed" or "in-progress":
-    skip
-  
-  if feature.dependencies is empty:
-    add to horizon (no blockers)
-  else:
-    all_deps_complete = true
-    for each dep in feature.dependencies:
-      if features[dep].status != "completed":
-        all_deps_complete = false
-        break
+def calculate_horizon(features):
+    """Find features ready to implement."""
+    horizon = []
+    blocked = []
     
-    if all_deps_complete:
-      add to horizon
+    for fid, f in features.items():
+        status = f.get('status', 'not-started')
+        
+        if status in ['completed', 'in-progress']:
+            continue
+        
+        deps = f.get('dependencies', [])
+        if not deps:
+            horizon.append(fid)
+        else:
+            all_complete = all(
+                features.get(dep, {}).get('status') == 'completed' 
+                for dep in deps
+            )
+            if all_complete:
+                horizon.append(fid)
+            else:
+                blocked.append((fid, deps))
+    
+    return horizon, blocked
+
+def count_dependents(features):
+    """Count how many features depend on each feature."""
+    dependents = defaultdict(int)
+    for f in features.values():
+        for dep in f.get('dependencies', []):
+            dependents[dep] += 1
+    return dependents
+
+def infer_complexity(feature):
+    """Infer complexity from tasks and keywords."""
+    tasks = len(feature.get('tasks', []))
+    desc = feature.get('description', '').lower()
+    name = feature.get('name', '').lower()
+    
+    # ML/AI = high complexity
+    if any(kw in desc or kw in name for kw in ['ml', 'ai', 'model', 'training', 'inference']):
+        return 'High', 1
+    
+    # Integration = medium
+    if any(kw in desc or kw in name for kw in ['integration', 'pipeline', 'workflow']):
+        return 'Medium', 2
+    
+    # Many tasks = higher complexity
+    if tasks > 6:
+        return 'High', 1
+    elif tasks > 4:
+        return 'Medium', 2
+    else:
+        return 'Low', 3
+
+def is_showable(fid, feature):
+    """Check if feature is visible/demonstrable."""
+    if fid.startswith('ui-'):
+        return True
+    
+    desc = feature.get('description', '').lower()
+    name = feature.get('name', '').lower()
+    
+    return any(kw in desc or kw in name for kw in [
+        'display', 'viewer', 'visualization', 'render', 'interface'
+    ])
+
+def score_feature(fid, feature, dependents, current_sprint):
+    """Score feature for recommendation."""
+    score = 0
+    reasons = []
+    
+    # Unblocking power (most important)
+    unblock_count = dependents.get(fid, 0)
+    score += unblock_count * 3
+    if unblock_count > 0:
+        reasons.append(f"Unblocks {unblock_count} feature{'s' if unblock_count != 1 else ''}")
+    
+    # Complexity (prefer low-hanging fruit)
+    complexity, complexity_bonus = infer_complexity(feature)
+    score += complexity_bonus
+    if complexity == 'Low':
+        reasons.append("Low complexity - quick win")
+    
+    # Sprint priority
+    version = feature.get('version', '')
+    moscow = feature.get('moscow', '')
+    if version == current_sprint:
+        score += 5
+        if moscow == 'Must-have':
+            score += 3
+            reasons.append(f"Must-have for {current_sprint}")
+    
+    # Showability (for Demo)
+    if current_sprint == 'Demo' and is_showable(fid, feature):
+        score += 2
+        reasons.append("Visible to demo judges")
+    
+    # Foundational (no dependencies)
+    if not feature.get('dependencies', []):
+        score += 2
+        reasons.append("Foundational - no dependencies")
+    
+    return score, reasons, complexity
+
+def recommend_feature(horizon, features, current_sprint):
+    """Find best feature to implement next."""
+    if not horizon:
+        return None, [], None
+    
+    dependents = count_dependents(features)
+    scored = []
+    
+    for fid in horizon:
+        feature = features[fid]
+        score, reasons, complexity = score_feature(fid, feature, dependents, current_sprint)
+        scored.append((score, fid, reasons, complexity))
+    
+    scored.sort(reverse=True, key=lambda x: x[0])
+    return scored[0][1], scored[0][2], scored[0][3]
+
+def get_stats(features):
+    """Calculate feature statistics."""
+    stats = {
+        'completed': 0,
+        'in_progress': 0,
+        'not_started': 0,
+        'by_version': defaultdict(lambda: {'total': 0, 'completed': 0})
+    }
+    
+    for f in features.values():
+        status = f.get('status', 'not-started')
+        version = f.get('version', 'Unknown')
+        
+        if status == 'completed':
+            stats['completed'] += 1
+            stats['by_version'][version]['completed'] += 1
+        elif status == 'in-progress':
+            stats['in_progress'] += 1
+        else:
+            stats['not_started'] += 1
+        
+        stats['by_version'][version]['total'] += 1
+    
+    return stats
+
+def main():
+    features = load_features()
+    horizon, blocked = calculate_horizon(features)
+    stats = get_stats(features)
+    
+    # Determine current sprint
+    current_sprint = 'Demo'
+    for version in ['Demo', 'Version 1', 'Version 2']:
+        if stats['by_version'][version]['completed'] < stats['by_version'][version]['total']:
+            current_sprint = version
+            break
+    
+    # Check if all done
+    if stats['completed'] == len(features):
+        print("🎉 ALL FEATURES COMPLETED!\n")
+        print("Sprint Summary:")
+        for version in ['Demo', 'Version 1', 'Version 2']:
+            v_stats = stats['by_version'][version]
+            print(f"  • {version}: {v_stats['completed']} features completed")
+        print(f"\nTotal: {stats['completed']} features implemented\n")
+        return
+    
+    # Check if nothing ready
+    if not horizon:
+        print("⚠️  NO FEATURES READY\n")
+        print(f"All features are either:")
+        print(f"  • Completed: {stats['completed']} features")
+        print(f"  • In Progress: {stats['in_progress']} features")
+        print(f"  • Blocked: {len(blocked)} features\n")
+        
+        if blocked:
+            print("Current blockers:")
+            for fid, deps in blocked[:5]:
+                incomplete = [d for d in deps if features.get(d, {}).get('status') != 'completed']
+                print(f"  • {fid}: Waiting for {', '.join(incomplete)}")
+        return
+    
+    # Get recommendation
+    rec_id, reasons, complexity = recommend_feature(horizon, features, current_sprint)
+    rec_feature = features[rec_id]
+    dependents = count_dependents(features)
+    
+    # Display
+    print("🎯 DEVELOPMENT HORIZON\n")
+    print(f"Current Sprint: {current_sprint}")
+    print(f"Progress: {stats['completed']} completed, {stats['in_progress']} in-progress, {len(horizon)} ready\n")
+    
+    print("━" * 70)
+    print(f"\n⭐ RECOMMENDED: {rec_id}\n")
+    print(f"   📋 {rec_feature['name']}")
+    print(f"   🎯 Priority: {rec_feature['moscow']} ({rec_feature['version']})")
+    print(f"   📊 Complexity: {complexity}")
+    unblock_count = dependents.get(rec_id, 0)
+    if unblock_count > 0:
+        print(f"   🔓 Unblocks: {unblock_count} feature{'s' if unblock_count != 1 else ''}")
+    if is_showable(rec_id, rec_feature):
+        print(f"   👁️  Showable - visible to demo judges")
+    
+    print(f"\n   Why recommended:")
+    for reason in reasons:
+        print(f"   • {reason}")
+    
+    print("\n" + "━" * 70)
+    print(f"\nOTHER READY FEATURES ({len(horizon) - 1} available):\n")
+    
+    for i, fid in enumerate(horizon, 1):
+        if fid == rec_id:
+            continue
+        
+        f = features[fid]
+        _, _, comp = infer_complexity(f)
+        
+        print(f"{i}. {fid}")
+        print(f"   📋 {f['name']}")
+        print(f"   🎯 {f['moscow']} ({f['version']})")
+        print(f"   📊 Complexity: {comp}")
+        
+        deps = f.get('dependencies', [])
+        if deps:
+            print(f"   🔗 Dependencies: {', '.join(deps)} ✓")
+        else:
+            print(f"   🔗 Dependencies: None")
+        
+        if is_showable(fid, f):
+            print(f"   👁️  Showable")
+        print()
+    
+    if blocked:
+        print("━" * 70)
+        print(f"\nBLOCKED FEATURES ({len(blocked)} waiting):\n")
+        for fid, deps in blocked[:5]:
+            incomplete = [d for d in deps if features.get(d, {}).get('status') != 'completed']
+            print(f"• {fid}: Waiting for {', '.join(incomplete)}")
+    
+    print("\n" + "━" * 70)
+    print(f"\n💡 Ready to plan? Run: @plan-feature {rec_id}")
+    print(f"💡 Or select different feature from list above\n")
+
+if __name__ == '__main__':
+    main()
 ```
 
-**3. Gather Context**
-- Current sprint/version focus (from features or product.md)
-- Completed features count per sprint
-- In-progress features
-- Blocked features (dependencies not met)
-
-### Phase 2: Generate Recommendation
-
-**Recommendation Algorithm** (Decision Tree):
-
-```
-1. Filter horizon by current sprint (Demo > Version 1 > Version 2)
-
-2. Within current sprint, prioritize by MoSCoW:
-   - Must-have features first
-   - Then Should-have
-   - Then Could-have
-
-3. Among same priority, score by:
-   - Unblocking power: How many features depend on this? (higher = better)
-   - Complexity: Low > Medium > High (lower-hanging fruit)
-   - Risk: Does it validate critical technology? (risky tech early)
-   - Showability: Is it visible/demonstrable? (for Demo sprint)
-
-4. Calculate recommendation score:
-   score = (unblocking_power * 3) + 
-           (complexity_bonus) +  // Low=3, Med=2, High=1
-           (risk_bonus) +         // Risky tech=2, else=0
-           (showability_bonus)    // Visible=2, else=0
-
-5. Recommend highest scoring feature
-```
-
-**Complexity Inference** (if not explicitly in feature):
-- Count tasks in feature file
-- Check for ML/AI keywords (higher complexity)
-- Check for "integration" keywords (medium complexity)
-- UI-only features (lower complexity)
-
-**Showability Detection**:
-- major-section = "ui" → showable
-- Keywords: "display", "viewer", "visualization" → showable
-- Keywords: "api", "backend", "database" → not showable (but necessary)
-
-### Phase 3: Present Horizon and Recommendation
-
-**Display Format**:
-
-```
-🎯 DEVELOPMENT HORIZON
-
-Current Sprint: [Demo|Version 1|Version 2]
-Progress: [N] completed, [M] in-progress, [P] ready
-Milestone: [Sprint Name] - [X]% complete
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⭐ RECOMMENDED: [feature-id]
-
-   📋 [Feature Name]
-   🎯 Priority: [Must-have|Should-have|Could-have] ([Sprint])
-   📊 Complexity: [Low|Medium|High]
-   🔓 Unblocks: [N] features
-   [👁️  Showable - visible to demo judges]
-   
-   Why recommended:
-   • [Reason 1: e.g., "Foundational feature for Demo sprint"]
-   • [Reason 2: e.g., "Unblocks 3 Must-have features"]
-   • [Reason 3: e.g., "Low complexity, quick win"]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-OTHER READY FEATURES ([N] available):
-
-1. [feature-id-1]
-   📋 [Feature Name]
-   🎯 [Priority] ([Sprint])
-   📊 Complexity: [Low|Medium|High]
-   🔗 Dependencies: [dep-1] ✓, [dep-2] ✓
-   [👁️  Showable]
-
-2. [feature-id-2]
-   📋 [Feature Name]
-   🎯 [Priority] ([Sprint])
-   📊 Complexity: [Low|Medium|High]
-   🔗 Dependencies: None
-
-3. [feature-id-3]
-   📋 [Feature Name]
-   🎯 [Priority] ([Sprint])
-   📊 Complexity: [Low|Medium|High]
-   🔗 Dependencies: [dep-1] ✓
-
-[... list all horizon features ...]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-BLOCKED FEATURES ([M] waiting):
-
-• [feature-id-x]: Waiting for [dep-1], [dep-2]
-• [feature-id-y]: Waiting for [dep-3]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Select feature to plan:
-  • Type 'r' or 'recommended' for recommended feature
-  • Type number (1, 2, 3...) for other ready features
-  • Type feature-id directly (e.g., 'ui-splash-login-00001')
-  • Type 'list' to see full feature details
-  • Type 'quit' to exit
-
-Your choice:
-```
-
-### Phase 4: User Selection and Planning
-
-**Handle user input:**
-
-- **'r' or 'recommended'**: Select recommended feature
-- **Number (1-N)**: Select from ready features list
-- **feature-id**: Direct selection (validate it's in horizon)
-- **'list'**: Show detailed view of all horizon features
-- **'quit'**: Exit without planning
-
-**After selection:**
-
-```
-✅ SELECTED: [feature-id] - [Feature Name]
-
-Invoking @plan-feature to create implementation plan...
-
-[Automatically invoke @plan-feature with selected feature-id]
-```
-
-**@plan-feature Integration**:
-- Pass feature-id as argument
-- Pass feature file path: `.kiro/features/[feature-id].md`
-- @plan-feature reads feature file for context
-- Generates plan in `.kiro/plans/[feature-id].md`
-
-### Phase 5: Update Feature Status
-
-**After @plan-feature completes:**
-
-```
-📝 PLAN CREATED
-
-Plan file: .kiro/plans/[feature-id].md
-
-Update feature status to 'in-progress'? (yes/no)
-```
-
-**If yes:**
-- Update feature file YAML: `status: in-progress`
-- Update feature file YAML: `started_date: [current timestamp]`
-- Update markdown status field
-- Update features.json
-
-**Prompt next action:**
-```
-🚀 READY TO IMPLEMENT
-
-Next steps:
-  1. Review plan: .kiro/plans/[feature-id].md
-  2. Execute plan: @execute .kiro/plans/[feature-id].md
-  3. Or return to horizon: @next
-
-What would you like to do?
-```
-
-## Edge Cases
-
-### No Features Ready
-```
-⚠️  NO FEATURES READY
-
-All features are either:
-  • Completed: [N] features
-  • In Progress: [M] features
-  • Blocked: [P] features (waiting on dependencies)
-
-Current blockers:
-  • [feature-id-1]: Waiting for [dep-1]
-  • [feature-id-2]: Waiting for [dep-2]
-
-Recommendation: Complete in-progress features first.
-
-In Progress:
-  • [feature-id-x] - [Feature Name]
-    Started: [date]
-    Plan: .kiro/plans/[feature-id-x].md
-```
-
-### All Features Completed
-```
-🎉 ALL FEATURES COMPLETED!
-
-Sprint Summary:
-  • Demo: [N] features completed
-  • Version 1: [M] features completed
-  • Version 2: [P] features completed
-
-Total: [X] features implemented
-
-Next steps:
-  • Review DEVLOG.md for development history
-  • Run @code-review-hackathon for submission evaluation
-  • Prepare demo and documentation
-```
-
-### features.json Not Found
-```
-❌ ERROR: features.json not found
-
-The feature graph hasn't been created yet.
-
-Run @design-digest first to:
-  1. Synthesize design documents
-  2. Generate feature roadmap
-  3. Create features.json dependency graph
-
-Then return to @next to select features.
-```
-
-## Output Summary
-
-After successful selection and planning:
-
-```
-✅ NEXT FEATURE SELECTED
-
-Feature: [feature-id] - [Feature Name]
-Priority: [Must-have] ([Demo])
-Status: not-started → in-progress
-Plan: .kiro/plans/[feature-id].md
-
-Ready to execute: @execute .kiro/plans/[feature-id].md
-```
-
-## Success Criteria
-
-- [ ] Feature graph loaded and analyzed correctly
-- [ ] Development horizon calculated accurately (all dependencies met)
-- [ ] Recommendation algorithm considers all factors
-- [ ] Presentation is clear and actionable
-- [ ] User can select any ready feature
-- [ ] @plan-feature invoked automatically with correct feature-id
-- [ ] Feature status updated to "in-progress"
-- [ ] Edge cases handled gracefully
-
-## Quality Checklist
-
-### Accuracy
-- [ ] Horizon only includes truly ready features
-- [ ] Dependency checking is correct (no circular deps)
-- [ ] Recommendation scoring is balanced and sensible
-
-### Usability
-- [ ] Presentation is scannable and clear
-- [ ] Recommendation rationale is transparent
-- [ ] Selection process is intuitive
-- [ ] Next steps are obvious
-
-### Integration
-- [ ] Seamlessly invokes @plan-feature
-- [ ] Updates feature status correctly
-- [ ] Maintains features.json consistency
-
-## Notes
-
-- This command is the entry point for feature development workflow
-- Run after @design-digest creates feature graph
-- Run repeatedly to select next feature after completing previous one
-- Recommendation algorithm can be refined based on experience (V1/V2 enhancement)
-- Consider adding "skip" option to mark features as "Won't-have" for current sprint
+Execute this script to show the development horizon and recommended next feature.

@@ -300,7 +300,7 @@ Accept estimates? (yes/edit)
 
 ### Next Steps
 
-[Auto-generated from features.json dependencies]
+[Auto-generated from .kiro/features.json dependencies]
 - [ ] [`[next-feature-id]`](.kiro/features/[next-feature-id].md) - [Unblocked by this feature]
 - [ ] [Other pending tasks]
 
@@ -314,7 +314,7 @@ Accept estimates? (yes/edit)
 - Maintain consistent formatting
 - Preserve all previous entries
 
-**2. Update `features.json`** (if not already updated by @execute)
+**2. Update `.kiro/features.json`** (if not already updated by @execute)
 - Ensure status is "completed"
 - Add/verify completed_date timestamp
 
@@ -324,7 +324,7 @@ Accept estimates? (yes/edit)
 
 Updated files:
 - .kiro/DEVLOG.md (new entry added)
-- features.json (status confirmed)
+- .kiro/features.json (status confirmed)
 
 Entry Summary:
 - Feature: [feature-id]
@@ -403,7 +403,7 @@ When generating drafts, use:
 ## Success Criteria
 
 - [ ] All git activity since last entry captured
-- [ ] Feature statuses updated in features.json
+- [ ] Feature statuses updated in .kiro/features.json
 - [ ] User-provided qualitative input captured
 - [ ] Technical decisions documented with rationale
 - [ ] Challenges and solutions clearly described
