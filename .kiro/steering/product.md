@@ -56,44 +56,309 @@ The typical workflow consists of the following steps:
 
 ## Versions and development sprints
 The app implementation is complex, so the following staged development will be adopted:
-1. Version: Demo sprint. This will be the only functionality that this sprint will implement, leaving most advanced features for Version 1 and Version 2. Components and features:
-   1. Frontend. The frontend will be installed locally with a container and will serve to `localhost`.
-      1. Only two pages:
-         1. Splash screen with login and password.
-         2. Main page:
-            1. Graphical element: File upload and select. A matching pair of GeoTIFF and LAS files are required. There will be a default file for human judges to evaluate the app.
-            2. Graphical element: Orthomosaic visualization (tiled) with pan and zoom with standard mouse actions. Visualization of automatically recognized features (received from backend), using OpenLayers.
-            3. Graphical element: DXF artifacts column with editable entries. This is essentially an interactive visualization of the DXF file which will eventually be downloaded. When a feature is selected, its corresponding DXF records a highlighted and editable. Only 2D graphical primitives for this version.
-            4. Graphical element: Floating user-tool pallette. Initially, there will be the following buttons: Accept All, Accept, Reject, Edit, Redo All, Redo, RedoRegion. AcceptAll and RedoAll are always active. Accept, Reject, Edit, and Redo are only active if a single feature has been selected in the orthomosaic pane. RedoRegion will be inactive for this version. Only AcceptAll, RedoAll, Accept, and Reject will be implemented for this version.
-            5. Graphical element: Download DXF.
-      2. Container which will serve to `localhost` only. For the Demo, the judges should be able to download the image from a Docker hub, create the conteainer and run it. The container will connect to the Backend, which will run in the cloud throughout the judging period.
-   2. Backend. The backend will run in a container in the cloud and should accept connection from the local frontend container.
-      1. Cloud server needs to be rented (AWS):
-         1. GPU with VRAM >40GB.
-         2. RAM 256/512 GB.
-         3. Hard drive >4TB.
-         4. Other parameters standard. 
-      2. User management. Supabase, if possible, as there is an available subscription.
-      3. File management. Supabase for file names. Server storage for uploaded files. For the demo, there will be only one GeoTIFF, LAS pair of about 6 GB. The user files will be supplied by the Frontend, but for the Demo, there will be only the default pair, which will already by on the server.
-      4. Automatic feature annotation with GroundingDino and SAM 2.
-      5. Geometrization engine which takes the Dino/Sam named masks and converts to engineering-grade CAD artifacts. These are sent to the Frontend and displayed on top of the orthomosaic. Expect to have some problems with proper localization. The orthomosaic world and relative coordinates will have to be matched, as well as the offsets of the generated feature artifacts.
-      6. API/protocol for communication with Frontend.
-      7. Container.
-2. Version: 1. This is just a draft. More detail will be added at a later time.
-   1. Frontend.
-      1. Main page:
-         1. Implement remaining user editing tools:
-            1. Edit: Pixel-precision feature editing on top of the orthomosaic. Allow manual addition of features using CAD primitives.
-            2. Redo: Ask for several proposals by the backend for the selected feature.
-            3. RedoRegion: Ask for several proposals for a selected region (square, parallelepiped, circle). 
-         2. Visualize raw SAM 2 masks and allow user to prompt SAM 2 (on the backend) directly when redoing.
-   2. Backend.
-      1. Fine-tuning of Grounding Dino and SAM 2.
-      2. RLHF using human actions from frontend.
-      3. Supervised training with a large manually annotated set of orthomosaics.
-3. Version: 2. This is just a draft. More detail will be added at a later time.
-   1. Frontend.
-      1. Improvements will be proposed while Version 1 is being implemented.
-   2. Backend.
-      1. Multi-agentic auto-improvement of Dino/SAM.
-      2. Meticulous assessment and measurement of features affecting the success criteria and reimplementation and/or further training/fine-tuning/self-improvement.
+
+### Demo Sprint (Actual Implementation - 24h Constraint)
+**Scope Reduction**: Due to 24-hour time constraint, Demo focuses on core concept proof with road features only.
+
+**Implemented Features (12 total)**:
+1. `infra-dev-setup-00001`: Development environment (Vite + React 18 + TypeScript + FastAPI)
+2. `ui-main-page-00001`: Single-page app with map + DXF pane
+3. `ui-map-init-00001`: OpenLayers map initialization
+4. `ui-cog-render-00001`: COG rendering with geotiff.js + WebGL
+5. `ui-pan-zoom-00001`: Pan and zoom controls
+6. `ml-dino-sam2-setup-00001`: Grounding DINO + SAM 2 integration
+7. `ml-road-centerline-00001`: Road centerline detection
+8. `ml-road-curb-00001`: Road curb detection
+9. `geom-vectorize-roads-00001`: Mask → line/polyline primitives
+10. `geom-dxf-generate-00001`: DXF file generation with ezdxf
+11. `ui-dxf-overlay-00001`: Render DXF on map + populate DXF pane
+12. `ui-feature-select-00001`: Click → highlight + download
+
+**Deferred to V1**:
+- User authentication (hardcoded for Demo)
+- File upload UI (hardcoded dataset)
+- Point cloud integration (COPC/LAS)
+- Accept/Reject/Edit workflow (selection only)
+- Additional feature types (manhole, building, fence, tree, pole, power line, parking)
+- Iterative refinement (Redo, RedoRegion)
+
+**Deployment Strategy**: Pre-processed results (run ML once on local GPU, commit DXF to repo, serve cached results)
+
+### Version 1 (Post-Hackathon)
+Full implementation of original Demo vision plus enhancements:
+
+1. **Frontend**:
+   - Full user authentication (Supabase)
+   - File upload interface (GeoTIFF + LAS pairing)
+   - Point cloud integration (COPC rendering with copc.js)
+   - Accept/Reject/Edit workflow
+   - All 11 feature types
+   - Floating tool palette (Accept All, Accept, Reject, Edit, Redo All, Redo, RedoRegion)
+   - Pixel-precision editing tools
+   - Raw SAM 2 mask visualization
+   - Direct SAM 2 prompting
+
+2. **Backend**:
+   - Live ML inference (not pre-processed)
+   - Cloud deployment (AWS GPU instance)
+   - Full feature detection pipeline (11 types)
+   - Fine-tuning of Grounding DINO and SAM 2
+   - RLHF using human actions
+   - Supervised training with annotated datasets
+
+3. **Infrastructure**:
+   - Docker containers (frontend + backend)
+   - Supabase integration (auth + storage)
+   - Cloud GPU rental (40GB+ VRAM)
+   - CI/CD pipeline
+
+### Version 2 (Future)
+Advanced features and self-improvement:
+
+1. **Frontend**:
+   - Real-time collaboration
+   - 3D CAD primitives (full 3D, not 2.5D)
+   - Mobile app (iOS/Android)
+   - Advanced editing tools
+
+2. **Backend**:
+   - Multi-agentic auto-improvement
+   - Physics-based validation (catenary curves, orthogonality)
+   - Iterative refinement loops
+   - Performance optimization
+
+---
+
+## Technology Architecture (Added from Design Synthesis)
+
+### Validated Technology Stack
+
+**Frontend (Mature & Stable)**:
+- React 18.3 (not 19 - prioritizing stability)
+- TypeScript 5.3+
+- Vite 5.x (build tool)
+- OpenLayers 10.6 (web mapping, best for CAD editing)
+- geotiff.js 2.1 (COG rendering)
+- dxf-parser (DXF parsing)
+- Zustand 4.5 (state management)
+- Radix UI (accessible components)
+- TailwindCSS 3.4 (styling)
+
+**Backend (Production-Ready)**:
+- Python 3.11+
+- FastAPI 0.110+ (async API framework)
+- PyTorch 2.2+ (deep learning)
+- Transformers 4.38 (Hugging Face models)
+- Grounding DINO (open-set object detection)
+- SAM 2 (segmentation with memory)
+- OpenCV 4.9 (image processing)
+- ezdxf 1.2 (DXF generation)
+- rasterio 1.3 (geospatial I/O)
+
+**Infrastructure**:
+- Docker (containerization)
+- Git LFS (large file storage)
+- Supabase (V1: auth + storage)
+- AWS GPU Instance (V1: g5.xlarge or similar)
+
+### System Components
+
+**Data Flow**:
+1. Frontend loads COG orthomosaic (HTTP Range Requests, tiled streaming)
+2. Backend processes with Grounding DINO (text-prompted detection)
+3. SAM 2 segments detected regions (with memory management)
+4. Masks converted to CAD primitives (skeletonization + Douglas-Peucker)
+5. DXF file generated with proper layers and styling
+6. Frontend overlays DXF vectors on orthomosaic
+7. User selects features, downloads DXF
+
+**Key Architectural Decisions**:
+- Thick client (frontend handles COG streaming, WebGL rendering)
+- OpenLayers over Mapbox/Leaflet (better for CAD editing)
+- Client-side COG rendering (geotiff.js with Web Workers)
+- SAM 2 memory management (sliding window reset to prevent OOM)
+- Pre-processed results for Demo (eliminates GPU rental)
+
+---
+
+## Feature Types (Detailed Detection Strategies)
+
+### 1. Road Centerline
+- **Detection**: Grounding DINO prompt: "road centerline, road center"
+- **Segmentation**: SAM 2 with bounding box prompts
+- **Vectorization**: Skeletonization + Douglas-Peucker simplification
+- **CAD Primitive**: LWPOLYLINE
+- **Layer**: ROAD_CENTERLINE
+- **Accuracy Target**: >85%
+
+### 2. Road Curb
+- **Detection**: Grounding DINO prompt: "road curb, curb edge, road edge"
+- **Segmentation**: SAM 2 with bounding box prompts
+- **Vectorization**: Contour detection + edge extraction
+- **CAD Primitive**: LWPOLYLINE
+- **Layer**: ROAD_CURB
+- **Accuracy Target**: >85%
+
+### 3. Road Gutter (V1)
+- **Detection**: Grounding DINO prompt: "road gutter, drainage"
+- **Segmentation**: SAM 2
+- **Vectorization**: Edge detection
+- **CAD Primitive**: LWPOLYLINE
+- **Layer**: ROAD_GUTTER
+
+### 4. Manhole (V1)
+- **Detection**: Grounding DINO prompt: "manhole, manhole cover"
+- **Segmentation**: SAM 2
+- **Vectorization**: Circle fitting
+- **CAD Primitive**: CIRCLE
+- **Layer**: MANHOLE
+- **Z-Extraction**: Ground level from point cloud
+
+### 5. Tree (V1)
+- **Detection**: PointNeXt (3D point cloud segmentation)
+- **Segmentation**: Vegetation classification
+- **Vectorization**: Centroid + radius
+- **CAD Primitive**: CIRCLE (2D) or CYLINDER (3D)
+- **Layer**: TREE
+
+### 6. Building (Roof) (V1)
+- **Detection**: PointNeXt (3D) + FrameField (2D)
+- **Segmentation**: Roof surface extraction
+- **Vectorization**: FrameField integration (sharp corners)
+- **CAD Primitive**: LWPOLYLINE (closed)
+- **Layer**: BUILDING
+- **Z-Extraction**: Roof elevation from point cloud
+
+### 7. Fence (V1)
+- **Detection**: KPConv (3D, linear infrastructure)
+- **Segmentation**: Linear feature extraction
+- **Vectorization**: Line fitting
+- **CAD Primitive**: LWPOLYLINE
+- **Layer**: FENCE
+
+### 8. Light/Electric Pole (V1)
+- **Detection**: Grounding DINO + PointNeXt
+- **Segmentation**: Vertical structure detection
+- **Vectorization**: Point location
+- **CAD Primitive**: POINT or CIRCLE
+- **Layer**: POLE
+- **Z-Extraction**: Pole height from point cloud
+
+### 9. Overhead Power Line (V1)
+- **Detection**: KPConv (3D, deformable kernels for linear features)
+- **Segmentation**: Wire extraction
+- **Vectorization**: Catenary curve fitting
+- **CAD Primitive**: SPLINE or LWPOLYLINE
+- **Layer**: POWER_LINE
+- **Physics Validation**: Catenary curve constraints
+
+### 10. Parking Lot (V1)
+- **Detection**: Grounding DINO + FrameField
+- **Segmentation**: Surface area detection
+- **Vectorization**: Polygon extraction
+- **CAD Primitive**: LWPOLYLINE (closed)
+- **Layer**: PARKING_LOT
+
+### 11. Parking Lot Stripe (V1)
+- **Detection**: Grounding DINO prompt: "parking stripe, parking line"
+- **Segmentation**: SAM 2
+- **Vectorization**: Line extraction
+- **CAD Primitive**: LINE or LWPOLYLINE
+- **Layer**: PARKING_STRIPE
+
+---
+
+## Performance Targets (From Design Documents)
+
+### Processing Time
+- **Model Loading**: <3 minutes (one-time on startup)
+- **Grounding DINO Inference**: <10 seconds per 2048x2048 tile
+- **SAM 2 Segmentation**: <5 seconds per detected region
+- **Vectorization**: <2 seconds per feature
+- **DXF Generation**: <1 second (all features)
+- **Total Pipeline**: <10 minutes for 6GB orthomosaic
+
+### Accuracy Targets
+- **Road Features**: >85% (centerline, curb)
+- **Discrete Objects**: >90% (manhole, pole)
+- **Buildings**: >90% (with FrameField)
+- **Linear Infrastructure**: >89% (power lines with KPConv)
+- **Overall System**: >90% (after human validation)
+
+### Resource Requirements
+- **VRAM**: 40GB+ for SAM 2 (24GB with aggressive memory management)
+- **RAM**: 64GB+ recommended
+- **GPU**: CUDA-capable (NVIDIA)
+- **Storage**: 4TB+ for model cache and datasets
+- **CPU**: 16+ cores for parallel processing
+
+---
+
+## Technical Constraints
+
+### Hardware Constraints
+- **SAM 2 Memory**: Linear growth of memory bank causes OOM on 24GB GPUs
+  - **Mitigation**: Sliding window memory reset (flush after N frames)
+- **Grounding DINO VRAM**: 8-10GB for Tiny variant, more for larger models
+  - **Mitigation**: Use Tiny variant, FP16 precision, batch processing
+- **Point Cloud Size**: Multi-gigabyte LAS files
+  - **Mitigation**: COPC format (octree, streaming), LOD selection
+
+### Software Constraints
+- **Coordinate System Alignment**: Pixel coordinates ↔ World coordinates
+  - **Solution**: rasterio for geospatial transformations, proj4js integration
+- **DXF Compatibility**: Must open in AutoCAD, QGIS, other CAD software
+  - **Solution**: ezdxf library, DXF R2018 specification
+- **COG Streaming**: Multi-gigabyte files without full download
+  - **Solution**: HTTP Range Requests, geotiff.js with Web Workers
+
+### Time Constraints (Demo Sprint)
+- **24-Hour Implementation**: Ruthless scope reduction required
+  - **Solution**: Pre-processed results, mature technology stack, 12 features only
+- **Frontend Development Inexperience**: Slower implementation
+  - **Solution**: Mature stack (React 18, Vite, OpenLayers), extensive documentation
+
+---
+
+## Development Roadmap (From Feature Graph)
+
+### Demo Sprint (12 features, 15-19 hours estimated)
+**Critical Path**: infra-dev-setup → ui-main-page → ui-map-init → ui-cog-render → ml-dino-sam2-setup → ml-road-centerline → geom-vectorize-roads → geom-dxf-generate → ui-dxf-overlay → ui-feature-select
+
+**Phase 1: Foundation** (2-3h)
+- infra-dev-setup-00001
+- ui-main-page-00001
+
+**Phase 2: Visualization** (3-4h)
+- ui-map-init-00001
+- ui-cog-render-00001
+- ui-pan-zoom-00001
+
+**Phase 3: Backend ML** (5-6h)
+- ml-dino-sam2-setup-00001
+- ml-road-centerline-00001
+- ml-road-curb-00001
+
+**Phase 4: Geometrization** (2-3h)
+- geom-vectorize-roads-00001
+- geom-dxf-generate-00001
+
+**Phase 5: Integration** (3-4h)
+- ui-dxf-overlay-00001
+- ui-feature-select-00001
+
+### Version 1 (Post-Hackathon, estimated 3-4 months)
+- Add 9 remaining feature types
+- Full user authentication and file upload
+- Point cloud integration (COPC)
+- Accept/Reject/Edit workflow
+- Iterative refinement
+- Cloud deployment
+- Fine-tuning and RLHF
+
+### Version 2 (Future, estimated 6-12 months)
+- Multi-agentic self-improvement
+- 3D CAD primitives
+- Real-time collaboration
+- Mobile apps
+- Advanced physics-based validation
