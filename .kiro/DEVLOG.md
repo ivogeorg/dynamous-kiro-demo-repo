@@ -18,6 +18,7 @@
 6. [2026-01-30 - Workflow Directory Corrections and Manual Validation](#2026-01-30---workflow-directory-corrections-and-manual-validation)
 7. [2026-01-30 - Feature Graph Relocation and Missing Files Generation](#2026-01-30---feature-graph-relocation-and-missing-files-generation)
 8. [2026-01-30 - Interactive Feature Selection Enhancement](#2026-01-30---interactive-feature-selection-enhancement)
+9. [2026-01-30 - Complete Workflow Automation and Vite Setup Fix](#2026-01-30---complete-workflow-automation-and-vite-setup-fix)
 
 ---
 
@@ -1025,5 +1026,110 @@ After valid selection, automatically invokes:
 - [ ] Test interactive selection in implementation session
 - [ ] Verify auto-invoke of @plan-feature works correctly
 - [ ] Begin feature implementation with streamlined workflow
+
+---
+
+## 2026-01-30 - Complete Workflow Automation and Vite Setup Fix
+
+**Session Duration**: 0.15 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Workflow Enhancement + Bug Fix
+
+### Overview
+
+Completed full workflow automation by adding execution prompt after planning, and fixed npm create vite hanging issue with non-interactive setup instructions. Workflow now flows seamlessly: @next → select feature → plan created → execute (all with simple prompts, no manual commands).
+
+### Technical Report
+
+#### Problem 1: Manual @execute Invocation
+After @plan-feature created a plan, user still had to manually type `@execute .kiro/plans/[feature-id].md`. This broke workflow momentum and was error-prone.
+
+**Solution:**
+Added second prompt in @next after plan creation:
+```
+Execute this plan now? (yes/no)
+```
+
+If yes:
+1. Update feature status to 'in-progress' in both `.kiro/features.json` and feature file
+2. Set `started_date` timestamp
+3. Auto-invoke `@execute .kiro/plans/[feature-id].md`
+
+If no:
+- Display command for later execution
+- Return to prompt
+
+#### Problem 2: npm create vite Hanging
+Command `npm create vite@latest frontend -- --template react-ts` is interactive and waits for user input, causing implementation to hang indefinitely.
+
+**Solution:**
+Updated `infra-dev-setup-00001.md` with three non-interactive approaches:
+
+1. **Manual setup** (recommended for existing directory):
+   - Create package.json, vite.config.ts, tsconfig.json manually
+   - Run `npm install` (non-interactive)
+   - Avoids directory conflicts
+
+2. **Temp directory approach**:
+   - Create in temp location
+   - Move files to frontend/
+   - Clean up temp
+
+3. **npm init -y approach**:
+   - Use `-y` flag for non-interactive init
+   - Install packages individually
+   - Create config files manually
+
+#### Files Modified
+- `.kiro/prompts/next.md` (execution prompt added)
+- `.kiro/features/infra-dev-setup-00001.md` (non-interactive setup instructions)
+- `.kiro/plans/infra-dev-setup-00001-plan.md` (created during testing)
+
+### Time Breakdown
+
+- **Workflow automation design**: 0.05 hours
+- **Vite setup fix research**: 0.05 hours
+- **Documentation and testing**: 0.05 hours
+- **Total Session Time**: 0.15 hours
+
+### Insights & Learnings
+
+- **Complete automation is key**: Every manual step is friction. The workflow should be: @next → [R] → [yes] → implementation starts. Three keystrokes total.
+
+- **Interactive commands break automation**: Any command that waits for user input (npm create, git commit without -m, etc.) will hang in automated workflows. Always use non-interactive flags or manual setup.
+
+- **Existing directories complicate scaffolding**: Tools like `create-vite` expect empty directories. When structure already exists (like our frontend/src/), manual setup is cleaner than fighting with scaffolding tools.
+
+- **Status updates belong in workflow**: Updating feature status to 'in-progress' when execution starts (not when planning) accurately reflects development state.
+
+### Workflow Summary
+
+**Before:**
+```
+@prime
+@next
+[type feature ID]
+@plan-feature [feature-id]
+[wait for plan]
+@execute .kiro/plans/[feature-id].md
+```
+
+**After:**
+```
+@next
+[R] ← select recommended
+[yes] ← execute now
+[implementation starts automatically]
+```
+
+From 6 steps (3 manual commands) to 3 steps (2 simple prompts). 50% reduction in manual actions.
+
+### Next Steps
+
+- [ ] Test complete automated workflow in fresh session
+- [ ] Verify non-interactive Vite setup works
+- [ ] Begin actual feature implementation
+- [ ] Monitor for any other workflow friction points
 
 ---
