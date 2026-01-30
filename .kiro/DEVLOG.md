@@ -4,7 +4,15 @@
 
 **Project**: Kaldic - AI-Powered Orthomosaic Feature Annotation
 **Started**: 2026-01-29
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-01-30
+
+---
+
+## 📑 Table of Contents
+
+1. [2026-01-29 - Custom Command Development and Workflow Integration](#2026-01-29---custom-command-development-and-workflow-integration)
+2. [2026-01-29 - Intelligent Feature Selection and Development Horizon](#2026-01-29---intelligent-feature-selection-and-development-horizon)
+3. [2026-01-29 - Feature Roadmap Generation with @design-digest](#2026-01-29---feature-roadmap-generation-with-design-digest)
 
 ---
 

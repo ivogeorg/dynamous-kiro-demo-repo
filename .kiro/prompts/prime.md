@@ -75,12 +75,26 @@ Provide a concise summary covering:
 **Check for feature graph:**
 ```bash
 if [ -f "features.json" ]; then
-  echo "Feature graph found"
+  echo "Feature graph found - analyzing roadmap"
 fi
 ```
 
-**If features.json exists, show horizon summary:**
+**If features.json exists, analyze and show horizon summary:**
 
+1. **Read features.json** and parse feature data
+2. **Calculate statistics:**
+   - Total features by version (Demo/V1/V2)
+   - Features by status (completed/in-progress/not-started/blocked)
+   - Features by priority (Must-have/Should-have/Could-have)
+3. **Calculate development horizon:**
+   - Features with status="not-started" AND all dependencies completed
+   - Group by version and priority
+4. **Identify next recommended feature:**
+   - Current version's Must-haves first
+   - Score by: unblocking power + (low complexity) + (showability for Demo)
+   - Pick highest scoring ready feature
+
+**Display horizon summary:**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -89,12 +103,19 @@ fi
 Current Sprint: [Demo|Version 1|Version 2]
 Progress: [N] completed, [M] in-progress, [P] ready to implement
 
-Ready Features: [P]
-Blocked Features: [X] (waiting on dependencies)
+Feature Breakdown:
+  • Demo: [X] features ([Y] complete, [Z] remaining)
+  • Version 1: [A] features (all blocked by Demo)
+  • Version 2: [B] features (all blocked by V1)
+
+Ready Features: [P] (dependencies met, not started)
+Blocked Features: [Q] (waiting on dependencies)
+In Progress: [M] (currently being implemented)
 
 Next Recommended: [feature-id] - [Feature Name]
   Priority: [Must-have] ([Sprint])
   Why: [Brief reason - e.g., "Foundational, unblocks 3 features"]
+  Dependencies: [All met ✓]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
