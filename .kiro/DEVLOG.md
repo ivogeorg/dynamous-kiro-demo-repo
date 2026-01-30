@@ -16,6 +16,7 @@
 4. [2026-01-30 - Workflow Refinements and Project Consistency](#2026-01-30---workflow-refinements-and-project-consistency)
 5. [2026-01-30 - Project Structure and ML Pipeline Setup](#2026-01-30---project-structure-and-ml-pipeline-setup)
 6. [2026-01-30 - Workflow Directory Corrections and Manual Validation](#2026-01-30---workflow-directory-corrections-and-manual-validation)
+7. [2026-01-30 - Feature Graph Relocation and Missing Files Generation](#2026-01-30---feature-graph-relocation-and-missing-files-generation)
 
 ---
 
@@ -876,5 +877,84 @@ Fixed incorrect directory references throughout workflow commands and added mand
 - [ ] Test @prime → @next → @plan-feature → @execute workflow
 - [ ] Verify manual validation prompts work correctly
 - [ ] Begin feature implementation with clean workflow
+
+---
+
+## 2026-01-30 - Feature Graph Relocation and Missing Files Generation
+
+**Session Duration**: 0.2 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Workflow Refinement
+
+### Overview
+
+Relocated features.json to .kiro/ directory and generated all 11 missing feature specification files. Implementation session discovered features.json at root instead of .kiro/, and only 1 of 12 feature files existed. Fixed both issues to ensure workflow commands work correctly.
+
+### Technical Report
+
+#### Completed Tasks
+- Moved `features.json` → `.kiro/features.json`
+- Updated 5 commands with new path (20+ occurrences total):
+  - @prime: 3 occurrences
+  - @next: 3 occurrences  
+  - @add-feature: 8 occurrences
+  - @design-digest: 3 occurrences
+  - @devlog-update: 4 occurrences
+- Generated 11 missing feature files in `.kiro/features/`:
+  - ui-main-page-00001.md
+  - ui-map-init-00001.md
+  - ui-cog-render-00001.md
+  - ui-pan-zoom-00001.md
+  - ml-dino-sam2-setup-00001.md
+  - ml-road-centerline-00001.md
+  - ml-road-curb-00001.md
+  - geom-vectorize-roads-00001.md
+  - geom-dxf-generate-00001.md
+  - ui-dxf-overlay-00001.md
+  - ui-feature-select-00001.md
+
+#### Feature File Structure
+Each generated file includes:
+- YAML frontmatter (id, name, version, moscow, status, dates)
+- Description and dependencies
+- Task breakdown from features.json
+- Testable outcome
+- Design source reference
+- Implementation guidance section
+- Validation checklist
+
+#### Files Modified
+- `.kiro/features.json` (moved from root)
+- `.kiro/prompts/prime.md`
+- `.kiro/prompts/next.md`
+- `.kiro/prompts/add-feature.md`
+- `.kiro/prompts/design-digest.md`
+- `.kiro/prompts/devlog-update.md`
+- 11 new feature files created
+
+### Time Breakdown
+
+- **Path Updates**: 0.05 hours
+- **Feature File Generation**: 0.1 hours
+- **Testing and Verification**: 0.05 hours
+- **Total Session Time**: 0.2 hours
+
+### Insights & Learnings
+
+- **features.json is not a manifest**: Unlike package.json or Cargo.toml, features.json is mutable development state that changes with every feature completion, status update, and dynamic addition. It belongs with workflow artifacts in .kiro/, not at project root.
+
+- **Living vs. static artifacts**: Static manifests (package.json, README.md) belong at root. Living development artifacts (features.json, plans, reports) belong in .kiro/. This distinction clarifies project organization.
+
+- **@design-digest incomplete execution**: Original run only created 1 of 12 feature files. Likely hit context limit or stopped early. Generating all files upfront ensures @next and @plan-feature work correctly.
+
+- **Automated generation from JSON**: Python script to generate feature files from features.json ensures consistency and saves manual work. Each file properly structured with all metadata.
+
+### Next Steps
+
+- [ ] Test @prime in new session to verify .kiro/features.json discovery
+- [ ] Verify all 12 feature files are accessible
+- [ ] Run @next to confirm feature selection works
+- [ ] Begin implementation with corrected workflow
 
 ---
