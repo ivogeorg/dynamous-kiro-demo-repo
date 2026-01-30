@@ -17,6 +17,7 @@
 5. [2026-01-30 - Project Structure and ML Pipeline Setup](#2026-01-30---project-structure-and-ml-pipeline-setup)
 6. [2026-01-30 - Workflow Directory Corrections and Manual Validation](#2026-01-30---workflow-directory-corrections-and-manual-validation)
 7. [2026-01-30 - Feature Graph Relocation and Missing Files Generation](#2026-01-30---feature-graph-relocation-and-missing-files-generation)
+8. [2026-01-30 - Interactive Feature Selection Enhancement](#2026-01-30---interactive-feature-selection-enhancement)
 
 ---
 
@@ -956,5 +957,73 @@ Each generated file includes:
 - [ ] Verify all 12 feature files are accessible
 - [ ] Run @next to confirm feature selection works
 - [ ] Begin implementation with corrected workflow
+
+---
+
+## 2026-01-30 - Interactive Feature Selection Enhancement
+
+**Session Duration**: 0.05 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Workflow Enhancement
+
+### Overview
+
+Enhanced @next command to include interactive feature selection with automatic invocation of @plan-feature. Eliminates error-prone manual typing of feature IDs by allowing users to select via simple prompts (R for recommended, 1-N for numbered features, Q to quit).
+
+### Technical Report
+
+#### Problem Identified
+- @next displayed horizon and recommendation but required manual typing: `@plan-feature [feature-id]`
+- No tab-completion for feature IDs makes typing error-prone
+- Copy-pasting feature IDs feels clunky and breaks workflow flow
+- Edge case: single ready feature still required manual command
+
+#### Solution Implemented
+Added interactive prompt after horizon display:
+```
+SELECT FEATURE TO PLAN:
+  [R] Recommended: [feature-id]
+  [1-N] Other ready features (by number)
+  [Q] Quit
+
+Your choice:
+```
+
+User input handling:
+- `R` or `r` or Enter → Use recommended feature
+- `1-N` → Use numbered feature from list
+- `Q` or `q` → Exit without planning
+- Invalid input → Error message and re-prompt
+
+After valid selection, automatically invokes:
+```
+@plan-feature [selected-feature-id]
+```
+
+#### Files Modified
+- `.kiro/prompts/next.md`
+
+### Time Breakdown
+
+- **Design and Implementation**: 0.03 hours
+- **Testing and Documentation**: 0.02 hours
+- **Total Session Time**: 0.05 hours
+
+### Insights & Learnings
+
+- **Minimize manual typing**: In rapid development workflows, every manual step is friction. Interactive prompts with single-key choices (R/1-9/Q) are faster and less error-prone than typing feature IDs.
+
+- **Auto-invoke next step**: When workflow is deterministic (select feature → plan feature), automatically invoking the next command eliminates a step and keeps momentum.
+
+- **Edge cases matter**: Even with one ready feature, prompting feels better than assuming. User confirms intent before proceeding.
+
+- **Streamlined workflow**: @prime → @next → [select] → @plan-feature → @execute now flows naturally without manual command typing between steps.
+
+### Next Steps
+
+- [ ] Test interactive selection in implementation session
+- [ ] Verify auto-invoke of @plan-feature works correctly
+- [ ] Begin feature implementation with streamlined workflow
 
 ---
