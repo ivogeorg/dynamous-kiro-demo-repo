@@ -286,3 +286,179 @@ Phase 3: Submission Preparation
 - [ ] Start feature implementation
 
 ---
+
+## 2026-01-29 - Feature Roadmap Generation with @design-digest
+
+**Session Duration**: 2.5 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Planning Phase Complete - Ready for Implementation
+
+### Overview
+
+Successfully executed @design-digest command to synthesize two comprehensive design documents (75KB total) into a pragmatic 12-feature roadmap for 24-hour Demo sprint. Validated all core technologies as current (2024-2025), made critical scope decisions to fit time constraints, and generated complete project documentation including README, feature specifications, and updated steering documents.
+
+### Technical Report
+
+#### Completed Tasks
+- Analyzed two design documents (~35KB + 40KB)
+- Validated 6 core technologies via web search (Grounding DINO, SAM 2, OpenLayers, React, KPConv, PointNeXt)
+- Extracted and structured 12 features with EARS-formatted requirements
+- Created flat dependency graph in features.json
+- Generated detailed feature specification (infra-dev-setup-00001.md)
+- Wrote comprehensive README.md with architecture diagrams
+- Updated tech.md with complete technology stack
+- Updated structure.md with project organization
+
+#### Design Documents Processed
+1. **A-Human-in-the-Loop-Framework-for-AI-Generated-CAD-Correction.md** (35KB)
+   - Frontend architecture (OpenLayers, React, COG rendering)
+   - DXF editing and interoperability
+   - Coordinate system transformations
+   
+2. **A-Hybrid-AI-Geometric-Pipeline-for-Automated-Geospatial-Feature-Extraction-and-Vectorization.md** (40KB)
+   - ML model selection (Grounding DINO, SAM 2, PointNeXt, KPConv)
+   - Vectorization strategies
+   - Multi-agentic systems
+
+### Technical Decisions
+
+1. **Scope Reduction: 34 → 12 Features**: Original extraction yielded 34 features. Pragmatically reduced to 12 for 24-hour sprint by cutting: point cloud integration (COPC), file upload UI, user authentication, multiple feature types (keeping only roads), Accept/Reject workflow, editing tools, and deployment complexity. Prioritized functional demonstration over feature completeness.
+
+2. **Mature Technology Stack**: Explicitly chose React 18 over 19, Vite over Bun, and FastAPI over experimental frameworks. Rationale: 24-hour sprint requires stability and extensive documentation over cutting-edge features. Minimizes debugging time for unfamiliar edge cases.
+
+3. **Road Features Only**: Reduced from 11 feature types to 2 (road centerline + road curb). Demonstrates core AI→CAD concept while keeping ML pipeline manageable. Other features (manhole, building, fence, etc.) deferred to V1.
+
+4. **Pre-Generated DXF Strategy**: Decided to pre-process demo dataset on local GPU (RTX 5090 24GB) and commit results to repo. Judges see instant results without GPU rental or processing wait. Backend serves cached DXF rather than running live inference. Acknowledged in README as Demo limitation.
+
+5. **Flat Dependency Graph**: Structured features.json as flat graph with explicit dependencies rather than nested hierarchy. Easier to query, reshuffle during development, and integrate with GitHub issues later. Enables flexible prioritization.
+
+6. **EARS Format for Requirements**: Used "When/While/If [trigger], the system shall [response]" format for all feature descriptions. Eliminates ambiguity, makes requirements testable, aligns with engineering standards.
+
+### Challenges & Solutions
+
+#### Challenge: Massive scope in design documents (75KB, 50+ potential features)
+**Solution**: Iterative scope reduction through interactive discussion. Started at 34 features, reduced to 16, finally to 12 based on realistic 24-hour timeline. Prioritized "showable" features that demonstrate core value proposition.
+**Impact**: Achievable roadmap that proves concept without overcommitting
+
+#### Challenge: SAM 2 VRAM requirements (40GB+) vs available hardware (24GB)
+**Solution**: Shifted to pre-processed results strategy. Run ML pipeline once locally with aggressive memory management, commit DXF to repo. Demo serves cached results, no live inference needed.
+**Impact**: Eliminates GPU rental cost, removes OOM risk during judging, faster demo experience
+
+#### Challenge: Balancing mature vs cutting-edge technologies
+**Solution**: Explicitly documented decision to prioritize stability (React 18, Vite, FastAPI) over novelty (React 19, Bun, experimental frameworks). Acknowledged this is for rapid prototyping, not production architecture.
+**Impact**: Reduced risk of edge cases, maximized available documentation and community support
+
+#### Challenge: Frontend development is new area for developer
+**Solution**: Chose most mature, well-documented stack possible. OpenLayers over Mapbox (better docs for CAD editing), React 18 over 19 (more stable), Vite over Bun (wider ecosystem). Prioritized "boring technology" that works.
+**Impact**: Safety net of mature ecosystem, extensive Stack Overflow answers, fewer surprises
+
+### Kiro CLI Usage
+
+- **@design-digest**: First real execution of newly created command. Successfully synthesized 75KB of design documents into actionable roadmap. Interactive conflict resolution worked well (no conflicts found, technologies validated as current).
+
+- **Technology validation**: Used web_search to validate 6 core technologies. All confirmed as current/actively developed (2024-2025). No alternatives needed.
+
+- **Feature extraction**: Systematic extraction from design documents using EARS format. Each feature includes context, dependencies, tasks (with MoSCoW), validation checklists, and design source references.
+
+### Code Changes
+
+**Files Created** (3):
+- `features.json` (~400 lines) - Complete dependency graph
+- `.kiro/features/infra-dev-setup-00001.md` (~150 lines) - Detailed feature spec
+- `.kiro/FEATURE_EXTRACTION_DRAFT.md` (~100 lines) - Planning notes
+
+**Files Modified** (3):
+- `README.md` (complete rewrite, ~500 lines) - Comprehensive project documentation
+- `.kiro/steering/tech.md` (~300 lines) - Technology stack and architecture
+- `.kiro/steering/structure.md` (~250 lines) - Project structure and conventions
+
+**Total Changes**: +~1,700 lines
+
+### Git Activity
+
+**Commits** (1):
+```
+66dac78 - feat: Complete @design-digest - Generate 12-feature Demo roadmap
+```
+
+### Time Breakdown
+
+- **Technology Validation**: 0.5 hours (web search for 6 technologies)
+- **Feature Extraction**: 1.0 hours (reading design docs, extracting features)
+- **Scope Negotiation**: 0.5 hours (interactive discussion, 34→16→12 features)
+- **Documentation**: 0.5 hours (README, tech.md, structure.md)
+- **Total Session Time**: 2.5 hours
+
+### Insights & Learnings
+
+- **Scope reduction is a feature, not a bug**: Starting with comprehensive design documents (75KB) and ruthlessly cutting to fit constraints (24h) produces better results than starting small. You see the full picture, then make informed trade-offs.
+
+- **Pre-processed demos are legitimate**: For hackathons/demos, pre-generating results and serving cached data is often smarter than live processing. Eliminates infrastructure complexity, removes failure points, provides instant gratification for judges.
+
+- **Mature technology is underrated**: In time-constrained environments, "boring" technology (React 18, Vite, FastAPI) beats cutting-edge (React 19, Bun, experimental frameworks). The ecosystem support and documentation density is worth more than new features.
+
+- **EARS format forces clarity**: Writing requirements as "When [trigger], system shall [response]" eliminates 90% of ambiguity. Makes features immediately testable and implementation-ready.
+
+- **Flat graphs > hierarchies for agile projects**: Flat dependency graphs with explicit edges are easier to reshuffle when priorities change mid-sprint. Hierarchical structures lock you into initial assumptions.
+
+- **Interactive planning saves time**: The back-and-forth discussion to reduce scope (34→12 features) took 30 minutes but saved 20+ hours of implementation time. Best ROI of the session.
+
+### 12-Feature Demo Roadmap
+
+**Phase 1: Foundation** (2 features, ~2h)
+1. infra-dev-setup-00001: Vite + React 18 + TypeScript + FastAPI
+2. ui-main-page-00001: Single page app with map + DXF pane
+
+**Phase 2: Visualization** (3 features, ~4h)
+3. ui-map-init-00001: OpenLayers initialization
+4. ui-cog-render-00001: COG rendering with geotiff.js
+5. ui-pan-zoom-00001: Pan and zoom controls
+
+**Phase 3: Backend ML** (3 features, ~6h)
+6. ml-dino-sam2-setup-00001: Grounding DINO + SAM 2 integration
+7. ml-road-centerline-00001: Road centerline detection
+8. ml-road-curb-00001: Road curb detection
+
+**Phase 4: Geometrization** (2 features, ~3h)
+9. geom-vectorize-roads-00001: Mask → line primitives
+10. geom-dxf-generate-00001: DXF file generation
+
+**Phase 5: Integration & UI** (2 features, ~4h)
+11. ui-dxf-overlay-00001: Render DXF on map + populate DXF pane
+12. ui-feature-select-00001: Click → highlight + download
+
+**Total Estimated Time**: 15-19 hours (fits 24h with 5h buffer)
+
+### Deployment Strategy (Updated)
+
+**Pre-Processed Results Approach:**
+1. Run ML pipeline once on local GPU (RTX 5090 24GB)
+2. Generate DXF file from demo.tif
+3. Commit DXF to repo (Git LFS)
+4. Backend serves cached DXF (no live inference)
+5. Frontend displays results instantly
+
+**Benefits:**
+- No cloud GPU rental required
+- Instant demo (no processing wait)
+- No OOM risk during judging
+- More time for frontend polish
+- Judges see results in 2 minutes
+
+**Acknowledged Limitation:**
+- Not "live" processing (documented in README)
+- Explained as Demo constraint, V1 will have live processing
+
+### Next Steps
+
+- [ ] Sleep and rest (eyes hurt, fading)
+- [ ] Morning: Start implementation with @next → @plan-feature → @execute
+- [ ] Run ML pipeline locally on RTX 5090 (process demo.tif)
+- [ ] Generate and commit DXF file
+- [ ] Implement 12 features in dependency order
+- [ ] Polish and test
+- [ ] Record demo video
+- [ ] Submit!
+
+---
