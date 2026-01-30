@@ -14,6 +14,7 @@
 2. [2026-01-29 - Intelligent Feature Selection and Development Horizon](#2026-01-29---intelligent-feature-selection-and-development-horizon)
 3. [2026-01-29 - Feature Roadmap Generation with @design-digest](#2026-01-29---feature-roadmap-generation-with-design-digest)
 4. [2026-01-30 - Workflow Refinements and Project Consistency](#2026-01-30---workflow-refinements-and-project-consistency)
+5. [2026-01-30 - Project Structure and ML Pipeline Setup](#2026-01-30---project-structure-and-ml-pipeline-setup)
 
 ---
 
@@ -650,5 +651,158 @@ d1d1ef3 - docs: Enrich product.md with synthesized knowledge from design-digest
 - [ ] Generate DXF file from demo.tif
 - [ ] Commit DXF to repo
 - [ ] Start frontend implementation with @next → @plan-feature → @execute
+
+---
+
+## 2026-01-30 - Project Structure and ML Pipeline Setup
+
+**Session Duration**: 0.5 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Implementation Phase - Infrastructure Ready
+
+### Overview
+
+Created complete project directory structure for frontend, backend, and data organization. Developed ML pipeline scripts for Windows 11 laptop (RTX 5090) to run Grounding DINO + SAM 2 once and generate masks. Configured Git LFS for large files. Established clear separation: ML processing on Windows (one-time), geometrization and frontend development on Ubuntu workstation, Docker deployment for judges.
+
+### Technical Report
+
+#### Completed Tasks
+- Created directory structure: frontend/src/{components,lib,store,types}, backend/{models,utils,scripts/demo}, data/{orthomosaic,pointcloud,dxf,masks}
+- Configured Git LFS (.gitattributes) for .tif, .las, .laz, .npy files
+- Created cut_region.py: Cut centered 2048x2048 region from orthomosaic
+- Created run_ml_pipeline.py: Run Grounding DINO + SAM 2 to generate masks
+- Created requirements-ml.txt: ML dependencies for Windows setup
+- Documented ML pipeline setup and usage (README.md)
+- Created data/README.md: Data organization and processing pipeline
+- Added .gitkeep files for empty directories
+
+#### ML Pipeline Scripts
+
+**cut_region.py**:
+- Uses GDAL to cut centered square region from GeoTIFF
+- Preserves georeferencing and coordinate system
+- Configurable crop size (default 2048x2048)
+- Outputs Cloud-Optimized GeoTIFF with LZW compression
+
+**run_ml_pipeline.py**:
+- Loads GeoTIFF and converts to RGB image
+- Runs Grounding DINO with text prompts:
+  - "road centerline . road center"
+  - "road curb . curb edge . road edge"
+- Uses detected bounding boxes as prompts for SAM 2
+- Combines multiple masks per feature type
+- Saves as numpy arrays (.npy) for geometrization
+- Includes CUDA detection and VRAM monitoring
+
+**requirements-ml.txt**:
+- PyTorch 2.2+ with CUDA support
+- Transformers 4.38+
+- OpenCV, Pillow, GDAL, rasterio
+- Grounding DINO, SAM 2 (from GitHub)
+
+### Technical Decisions
+
+1. **Three-Machine Strategy**: Clarified hardware setup - Ubuntu workstation (current session, no GPU, Docker), Windows 11 laptop (RTX 5090, ML pipeline once), Quad Titan V workstation (backup). ML runs once on Windows, generates masks, commits to repo. Ubuntu continues with geometrization and frontend.
+
+2. **Full Orthomosaic + Cutout Hybrid**: Frontend uses full 6GB orthomosaic with COG streaming (pan/zoom already in plan). Backend ML processes 2048x2048 cutout (fits RTX 5090 24GB VRAM). Best of both worlds: impressive visualization + manageable memory.
+
+3. **Git LFS for Large Files**: Configured .gitattributes to track GeoTIFF, LAS, and numpy arrays with Git LFS. Judges run `git lfs pull` after clone. Keeps repo size manageable while including demo data.
+
+4. **Centered Region Cut with GDAL**: Used GDAL (free, command-line) instead of expensive photogrammetric software. Preserves GeoTIFF structure, georeferencing, and metadata. Python script calculates center offset automatically.
+
+5. **Docker for Judges, Native for Development**: Docker available on Ubuntu workstation. Will provide docker-compose.yml for one-command judge setup. Develop natively for speed, containerize for deployment.
+
+6. **Clean Directory Structure**: Organized by concern - frontend (React), backend (FastAPI + scripts), data (by type). Scripts in backend/scripts/demo/ clearly marked as one-time ML pipeline. Separation enables parallel development.
+
+### Challenges & Solutions
+
+#### Challenge: Multi-GPU memory aggregation for SAM 2
+**Solution**: Confirmed SAM 2 cannot use multi-GPU memory aggregation (needs contiguous VRAM). Quad Titan V (4x12GB=48GB total) won't help - SAM 2 sees only 12GB per GPU. Using RTX 5090 (24GB) with 2048x2048 cutout instead.
+**Impact**: Manageable memory footprint, fits in 24GB with aggressive management
+
+#### Challenge: Cutting GeoTIFF without expensive software
+**Solution**: Used GDAL (free) with Python wrapper. gdal.Translate() preserves georeferencing, CRS, and metadata. Simple center calculation: offset = (size - crop_size) // 2.
+**Impact**: No software cost, scriptable, preserves all geospatial information
+
+#### Challenge: Windows PowerShell vs Bash for venv
+**Solution**: Documented PowerShell-specific commands (.\venv\Scripts\Activate.ps1) and execution policy workaround. Provided alternative (Command Prompt: venv\Scripts\activate.bat).
+**Impact**: Clear Windows setup instructions, no confusion
+
+### Kiro CLI Usage
+
+- **Workflow adherence**: Following proper workflow - document before moving to next phase
+- **@devlog-update**: Documenting infrastructure setup before frontend development
+- **Systematic approach**: Structure → Scripts → Documentation → Commit → Next phase
+
+### Code Changes
+
+**Files Created** (12):
+- `.gitattributes` (Git LFS configuration)
+- `backend/scripts/demo/cut_region.py` (~80 lines)
+- `backend/scripts/demo/run_ml_pipeline.py` (~180 lines)
+- `backend/scripts/demo/requirements-ml.txt` (~25 lines)
+- `backend/scripts/demo/README.md` (~200 lines)
+- `data/README.md` (~80 lines)
+- 6x `.gitkeep` files (empty directory placeholders)
+
+**Total Changes**: +~565 lines
+
+### Git Activity
+
+**Commits** (1):
+```
+dc2c961 - feat: Add project structure and ML pipeline scripts
+```
+
+### Time Breakdown
+
+- **Directory Structure**: 0.1 hours
+- **ML Pipeline Scripts**: 0.2 hours
+- **Documentation**: 0.1 hours
+- **Git LFS Configuration**: 0.05 hours
+- **Total Session Time**: 0.5 hours
+
+### Insights & Learnings
+
+- **Hybrid approach for large files**: Full orthomosaic for frontend (COG streaming), cutout for ML (memory management). Provides best user experience while staying within hardware constraints.
+
+- **GDAL is underrated**: Free, powerful, preserves geospatial metadata. No need for expensive photogrammetric software for simple operations like cropping.
+
+- **One-time ML processing is pragmatic**: For Demo sprint, running ML once and committing results eliminates GPU rental, OOM risk, and processing wait during judging. Judges see instant results.
+
+- **Clear machine separation**: Three machines with different roles - Ubuntu (development + Docker), Windows (ML once), Quad Titan V (backup). Documenting which machine does what prevents confusion.
+
+- **Directory structure matters**: Clean organization (frontend/, backend/, data/) with subdirectories by concern makes project navigable. Scripts in backend/scripts/demo/ clearly marked as one-time use.
+
+### Machine Setup Summary
+
+**Ubuntu 24.04 Workstation** (Current):
+- No GPU
+- Docker available
+- Main development machine
+- Frontend + Backend (pseudo) development
+- Geometrization (mask → DXF)
+
+**Windows 11 Laptop**:
+- RTX 5090 (24GB VRAM)
+- Run ML pipeline once
+- Generate masks → commit to repo
+- Then done
+
+**Quad Titan V Workstation**:
+- 4x 12GB = 48GB total
+- Backup if RTX 5090 has issues
+- Not usable for SAM 2 (can't aggregate memory)
+
+### Next Steps
+
+- [ ] Upload orthomosaic to data/orthomosaic/ (Windows laptop)
+- [ ] Run ML pipeline on Windows laptop
+- [ ] Commit masks to repo
+- [ ] Start frontend development (Ubuntu workstation)
+- [ ] Implement features 1-5 (Foundation + Visualization)
+- [ ] Pull masks and implement geometrization
+- [ ] Complete integration and Docker setup
 
 ---
