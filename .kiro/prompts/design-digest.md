@@ -299,6 +299,142 @@ Review these drafts. Options:
 Your choice:
 ```
 
+### Phase 6.5: Enrich Product Document
+
+**After steering documents updated, enrich product.md with synthesized knowledge:**
+
+**Rationale**: product.md was used as authoritative input at the start, but now we have much richer context from:
+- Design document synthesis
+- Technology validation
+- Feature extraction
+- Dependency analysis
+- Scope decisions
+
+**Generate enriched product.md:**
+
+1. **Read current product.md** - Preserve all original content
+2. **Identify gaps** - What's missing that we now know?
+3. **Generate enrichments** - Add sections without destroying original intent
+
+**Enrichment Areas:**
+
+**Add/Enhance:**
+- **Technology Stack Section**: Validated technologies with versions
+- **Architecture Overview**: High-level system design from synthesis
+- **Feature Types Detail**: Expanded descriptions of 11 feature types
+- **Development Phases**: Demo/V1/V2 breakdown with features
+- **Success Metrics**: Quantitative targets from design docs
+- **Technical Constraints**: VRAM, processing time, accuracy targets
+- **Integration Points**: How components connect (COG→ML→DXF→UI)
+
+**Preserve Original:**
+- Product purpose and vision
+- Target users and business objectives
+- User journey and workflow
+- Version scope definitions
+- Any specific requirements or constraints
+
+**Generate draft:**
+```markdown
+# Product Overview (Enhanced)
+
+[Original product.md content preserved]
+
+---
+
+## Technology Architecture (Added from Design Synthesis)
+
+### Validated Technology Stack
+[Technologies validated in Phase 2]
+
+### System Components
+[Architecture from design documents]
+
+### Data Flow
+[COG → Grounding DINO → SAM 2 → Vectorization → DXF]
+
+---
+
+## Feature Types (Detailed)
+
+[Expanded descriptions of 11 feature types with detection strategies]
+
+1. Road Centerline
+   - Detection: Grounding DINO prompt + SAM 2 segmentation
+   - Vectorization: Skeletonization + Douglas-Peucker
+   - CAD Primitive: LWPOLYLINE
+   - Accuracy Target: >85%
+
+[... for each feature type ...]
+
+---
+
+## Development Roadmap (From Feature Graph)
+
+### Demo Sprint ([N] features)
+[List of Demo features with IDs]
+
+### Version 1 ([M] features)
+[Deferred features]
+
+### Version 2 ([P] features)
+[Future enhancements]
+
+---
+
+## Performance Targets (From Design Documents)
+
+- Model Loading: <3 minutes
+- Grounding DINO Inference: <10 seconds per tile
+- SAM 2 Segmentation: <5 seconds per region
+- Vectorization: <2 seconds per feature
+- Total Pipeline: <10 minutes for 6GB orthomosaic
+
+---
+
+## Technical Constraints
+
+- VRAM: 40GB+ for SAM 2 (24GB with aggressive memory management)
+- RAM: 64GB+ recommended
+- GPU: CUDA-capable (NVIDIA)
+- Storage: 4TB+ for model cache and datasets
+
+---
+```
+
+**Present draft:**
+```
+📝 PRODUCT.MD ENRICHMENT
+
+Generated: .kiro/steering/product-enhanced.md
+
+Enrichments added:
+  • Technology architecture (validated stack)
+  • Detailed feature type descriptions
+  • Development roadmap (from features.json)
+  • Performance targets (from design docs)
+  • Technical constraints (VRAM, GPU, etc.)
+
+Original content preserved:
+  • Product purpose and vision
+  • Target users and business objectives
+  • User journey
+  • Version scope definitions
+
+Review enriched product.md. Options:
+1. Apply updates (replace product.md)
+2. Keep as product-enhanced.md for manual merge
+3. Regenerate with modifications
+
+Your choice:
+```
+
+**Merge Strategy:**
+- **Non-destructive**: Original sections preserved verbatim
+- **Additive**: New sections appended or inserted logically
+- **Consistent**: Maintain original tone and structure
+- **Traceable**: Mark enriched sections with "Added from Design Synthesis"
+
 ### Phase 7: PRD Generation
 
 **After all features are extracted and validated:**
@@ -310,6 +446,7 @@ Generated:
 - features.json (priority graph with [N] features)
 - .kiro/features/ ([N] individual feature files)
 - Draft steering document updates
+- Enriched product.md
 
 Would you like to generate a comprehensive PRD using @create-prd?
 
@@ -334,7 +471,10 @@ Individual feature specifications with context, guidance, and validation checkli
 ### 3. Draft Steering Updates: `.kiro/steering/*-draft.md`
 Updated technology and structure documentation.
 
-### 4. Optional PRD: `.kiro/PRD.md`
+### 4. Enriched Product Document: `.kiro/steering/product-enhanced.md` or `product.md`
+Enhanced product overview with synthesized knowledge from design documents (non-destructive merge).
+
+### 5. Optional PRD: `.kiro/PRD.md`
 Comprehensive Product Requirements Document (if requested).
 
 ## Success Criteria
