@@ -115,9 +115,9 @@
           "moscow": "Must-have"
         }
       ],
-      "status": "not-started",
-      "started_date": null,
-      "completed_date": null,
+      "status": "completed",
+      "started_date": "2026-01-30T21:23:39Z",
+      "completed_date": "2026-01-30T21:24:26Z",
       "testable_outcome": "OpenLayers map renders in container, no console errors",
       "design_source": "A-Human-in-the-Loop-Framework (Section 2.1: The Case for OpenLayers)"
     },

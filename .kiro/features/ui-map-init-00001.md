@@ -3,9 +3,9 @@ id: ui-map-init-00001
 name: OpenLayers Map Initialization
 version: Demo
 moscow: Must-have
-status: not-started
-started_date: None
-completed_date: None
+status: completed
+started_date: 2026-01-30T21:23:39Z
+completed_date: 2026-01-30T21:24:26Z
 ---
 
 # OpenLayers Map Initialization
