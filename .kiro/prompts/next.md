@@ -308,6 +308,38 @@ Your choice:
    ```
    @plan-feature [feature-id]
    ```
+4. **After plan is created, prompt for execution:**
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   📋 PLAN CREATED: .kiro/plans/[feature-id].md
+   
+   Execute this plan now? (yes/no)
+   ```
+   
+   **If yes:**
+   - Update feature status to 'in-progress' in `.kiro/features.json` and `.kiro/features/[feature-id].md`
+   - Set `started_date` to current ISO-8601 timestamp
+   - Display:
+     ```
+     🚀 STARTING IMPLEMENTATION
+     
+     Feature: [feature-id] - [Feature Name]
+     Status: not-started → in-progress
+     Started: [timestamp]
+     ```
+   - **Automatically invoke @execute**:
+     ```
+     @execute .kiro/plans/[feature-id].md
+     ```
+   
+   **If no:**
+   - Display:
+     ```
+     💡 Plan saved. Execute later with:
+        @execute .kiro/plans/[feature-id].md
+     ```
+   - Return to prompt
 
 **Invalid input:**
 ```

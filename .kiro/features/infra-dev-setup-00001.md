@@ -127,6 +127,48 @@ Both frontend and backend start without errors, hot reload works, CORS configure
 
 ## Notes
 
-- Use `npm create vite@latest frontend -- --template react-ts` for quick setup
-- Backend structure: `backend/main.py` (FastAPI app), `backend/process.py` (ML pipeline), `backend/models/` (model loading)
-- Consider using `concurrently` package to run both frontend and backend with single command for judges
+**Frontend Setup (Non-Interactive):**
+```bash
+# Option 1: Use npm init with -y flag
+cd frontend
+npm init -y
+npm install vite@latest @vitejs/plugin-react@latest --save-dev
+npm install react@^18.3.1 react-dom@^18.3.1
+npm install --save-dev typescript @types/react @types/react-dom
+
+# Create vite.config.ts, tsconfig.json, index.html, src/main.tsx manually
+# OR Option 2: Initialize outside and move files
+cd ..
+npm create vite@latest temp-frontend -- --template react-ts
+mv temp-frontend/* frontend/
+mv temp-frontend/.* frontend/ 2>/dev/null || true
+rm -rf temp-frontend
+```
+
+**Recommended Approach (Cleanest):**
+Since `frontend/` directory already exists with subdirectories, manually create the Vite config files:
+1. Create `package.json` with dependencies
+2. Create `vite.config.ts` with React plugin
+3. Create `tsconfig.json` with path aliases
+4. Create `index.html` entry point
+5. Create `src/main.tsx` and `src/App.tsx`
+6. Run `npm install`
+
+This avoids interactive prompts and directory conflicts.
+
+**Backend Structure:**
+- `backend/main.py` (FastAPI app)
+- `backend/process.py` (ML pipeline)
+- `backend/models/` (model loading)
+
+**Development Tip:**
+Consider using `concurrently` package to run both frontend and backend with single command for judges:
+```json
+{
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && python main.py"
+  }
+}
+```
