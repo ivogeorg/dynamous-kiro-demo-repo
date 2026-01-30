@@ -22,7 +22,7 @@ export function useMap(targetId: string) {
 
     // Create GeoTIFF layer
     const { layer: geoTiffLayer, source: geoTiffSource } = createGeoTIFFLayer(
-      '/data/orthomosaic/demo_cutout.tif'
+      '/data/orthomosaic/AVONDALE_ORTHO.tif' // Full orthomosaic for display
     )
 
     // Create map instance
