@@ -53,3 +53,47 @@ The typical workflow consists of the following steps:
 3. Accuracy over the whole ortomosaic (Target: >90%).
 4. Cumulative time of vectorization, from GeoTFF+LAS upload to DXF download, including automatic and manual phases (Target: 6 hours).
 5. Cost efficiency of automatic phase, including training, fine-tuning, and inference.
+
+## Versions and development sprints
+The app implementation is complex, so the following staged development will be adopted:
+1. Version: Demo sprint. This will be the only functionality that this sprint will implement, leaving most advanced features for Version 1 and Version 2. Components and features:
+   1. Frontend. The frontend will be installed locally with a container and will serve to `localhost`.
+      1. Only two pages:
+         1. Splash screen with login and password.
+         2. Main page:
+            1. Graphical element: File upload and select. A matching pair of GeoTIFF and LAS files are required. There will be a default file for human judges to evaluate the app.
+            2. Graphical element: Orthomosaic visualization (tiled) with pan and zoom with standard mouse actions. Visualization of automatically recognized features (received from backend), using OpenLayers.
+            3. Graphical element: DXF artifacts column with editable entries. This is essentially an interactive visualization of the DXF file which will eventually be downloaded. When a feature is selected, its corresponding DXF records a highlighted and editable. Only 2D graphical primitives for this version.
+            4. Graphical element: Floating user-tool pallette. Initially, there will be the following buttons: Accept All, Accept, Reject, Edit, Redo All, Redo, RedoRegion. AcceptAll and RedoAll are always active. Accept, Reject, Edit, and Redo are only active if a single feature has been selected in the orthomosaic pane. RedoRegion will be inactive for this version. Only AcceptAll, RedoAll, Accept, and Reject will be implemented for this version.
+            5. Graphical element: Download DXF.
+      2. Container which will serve to `localhost` only. For the Demo, the judges should be able to download the image from a Docker hub, create the conteainer and run it. The container will connect to the Backend, which will run in the cloud throughout the judging period.
+   2. Backend. The backend will run in a container in the cloud and should accept connection from the local frontend container.
+      1. Cloud server needs to be rented (AWS):
+         1. GPU with VRAM >40GB.
+         2. RAM 256/512 GB.
+         3. Hard drive >4TB.
+         4. Other parameters standard. 
+      2. User management. Supabase, if possible, as there is an available subscription.
+      3. File management. Supabase for file names. Server storage for uploaded files. For the demo, there will be only one GeoTIFF, LAS pair of about 6 GB. The user files will be supplied by the Frontend, but for the Demo, there will be only the default pair, which will already by on the server.
+      4. Automatic feature annotation with GroundingDino and SAM 2.
+      5. Geometrization engine which takes the Dino/Sam named masks and converts to engineering-grade CAD artifacts. These are sent to the Frontend and displayed on top of the orthomosaic. Expect to have some problems with proper localization. The orthomosaic world and relative coordinates will have to be matched, as well as the offsets of the generated feature artifacts.
+      6. API/protocol for communication with Frontend.
+      7. Container.
+2. Version: 1. This is just a draft. More detail will be added at a later time.
+   1. Frontend.
+      1. Main page:
+         1. Implement remaining user editing tools:
+            1. Edit: Pixel-precision feature editing on top of the orthomosaic. Allow manual addition of features using CAD primitives.
+            2. Redo: Ask for several proposals by the backend for the selected feature.
+            3. RedoRegion: Ask for several proposals for a selected region (square, parallelepiped, circle). 
+         2. Visualize raw SAM 2 masks and allow user to prompt SAM 2 (on the backend) directly when redoing.
+   2. Backend.
+      1. Fine-tuning of Grounding Dino and SAM 2.
+      2. RLHF using human actions from frontend.
+      3. Supervised training with a large manually annotated set of orthomosaics.
+3. Version: 2. This is just a draft. More detail will be added at a later time.
+   1. Frontend.
+      1. Improvements will be proposed while Version 1 is being implemented.
+   2. Backend.
+      1. Multi-agentic auto-improvement of Dino/SAM.
+      2. Meticulous assessment and measurement of features affecting the success criteria and reimplementation and/or further training/fine-tuning/self-improvement.
