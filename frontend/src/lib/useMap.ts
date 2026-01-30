@@ -3,7 +3,7 @@ import Map from 'ol/Map'
 import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
-import { fromLonLat } from 'ol/proj'
+import { fromLonLat, transformExtent } from 'ol/proj'
 import { register } from 'ol/proj/proj4'
 import proj4 from 'proj4'
 import { createGeoTIFFLayer } from './loadGeoTIFF'
@@ -53,12 +53,34 @@ export function useMap(targetId: string) {
         
         geoTiffSource.getView().then((viewConfig) => {
           console.log('GeoTIFF view config:', viewConfig)
-          if (viewConfig?.extent) {
-            view.fit(viewConfig.extent, {
+          
+          if (viewConfig?.extent && viewConfig?.projection) {
+            const sourceExtent = viewConfig.extent
+            const sourceProj = typeof viewConfig.projection === 'string' 
+              ? viewConfig.projection 
+              : viewConfig.projection.getCode()
+            
+            console.log('Source extent (EPSG:6405):', sourceExtent)
+            console.log('Source projection:', sourceProj)
+            
+            // Transform extent from EPSG:6405 to EPSG:3857 (Web Mercator)
+            const transformedExtent = transformExtent(
+              sourceExtent,
+              sourceProj,
+              'EPSG:3857'
+            )
+            
+            console.log('Transformed extent (EPSG:3857):', transformedExtent)
+            
+            view.fit(transformedExtent, {
               padding: [50, 50, 50, 50],
               duration: 1000,
+              maxZoom: 19,
             })
+            
             console.log('✓ GeoTIFF loaded, view fitted to extent')
+            console.log('Current center:', view.getCenter())
+            console.log('Current zoom:', view.getZoom())
           }
         }).catch((error) => {
           console.error('Error getting GeoTIFF view:', error)
