@@ -3,9 +3,9 @@ id: ui-cog-render-00001
 name: Cloud-Optimized GeoTIFF Rendering
 version: Demo
 moscow: Must-have
-status: not-started
-started_date: None
-completed_date: None
+status: completed
+started_date: 2026-01-30T22:43:14Z
+completed_date: 2026-01-30T22:44:23Z
 ---
 
 # Cloud-Optimized GeoTIFF Rendering

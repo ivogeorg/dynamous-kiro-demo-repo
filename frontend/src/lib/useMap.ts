@@ -4,6 +4,7 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
 import { fromLonLat } from 'ol/proj'
+import { createGeoTIFFLayer } from './loadGeoTIFF'
 
 export function useMap(targetId: string) {
   const mapRef = useRef<Map | null>(null)
@@ -11,20 +12,44 @@ export function useMap(targetId: string) {
   useEffect(() => {
     if (mapRef.current) return // Already initialized
 
+    // Create GeoTIFF layer
+    const { layer: geoTiffLayer, source: geoTiffSource } = createGeoTIFFLayer(
+      '/data/orthomosaic/demo_cutout.tif'
+    )
+
     // Create map instance
     const map = new Map({
       target: targetId,
       layers: [
         new TileLayer({
-          source: new OSM(), // OpenStreetMap base layer
+          source: new OSM(),
+          opacity: 0.3, // Dim OSM to see orthomosaic better
         }),
+        geoTiffLayer,
       ],
       view: new View({
-        center: fromLonLat([0, 0]), // Default center (will be replaced by COG extent)
+        center: fromLonLat([0, 0]),
         zoom: 2,
         minZoom: 1,
         maxZoom: 22,
       }),
+    })
+
+    // Fit view to GeoTIFF extent when loaded
+    geoTiffSource.on('change', () => {
+      if (geoTiffSource.getState() === 'ready') {
+        const view = map.getView()
+        
+        geoTiffSource.getView().then((viewConfig) => {
+          if (viewConfig?.extent) {
+            view.fit(viewConfig.extent, {
+              padding: [50, 50, 50, 50],
+              duration: 1000,
+            })
+            console.log('✓ GeoTIFF loaded, view fitted to extent')
+          }
+        })
+      }
     })
 
     mapRef.current = map
