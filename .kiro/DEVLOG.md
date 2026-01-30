@@ -13,6 +13,7 @@
 1. [2026-01-29 - Custom Command Development and Workflow Integration](#2026-01-29---custom-command-development-and-workflow-integration)
 2. [2026-01-29 - Intelligent Feature Selection and Development Horizon](#2026-01-29---intelligent-feature-selection-and-development-horizon)
 3. [2026-01-29 - Feature Roadmap Generation with @design-digest](#2026-01-29---feature-roadmap-generation-with-design-digest)
+4. [2026-01-30 - Workflow Refinements and Project Consistency](#2026-01-30---workflow-refinements-and-project-consistency)
 
 ---
 
@@ -468,5 +469,186 @@ Successfully executed @design-digest command to synthesize two comprehensive des
 - [ ] Polish and test
 - [ ] Record demo video
 - [ ] Submit!
+
+---
+
+## 2026-01-30 - Workflow Refinements and Project Consistency
+
+**Session Duration**: 1.5 hours
+**Branch**: master
+**Commits**: 5
+**Status**: Planning Phase - Project Consistency Achieved
+
+### Overview
+
+Refined custom command workflow based on identified gaps: added table of contents to large markdown files, generated missing PRD, enhanced @prime for features.json compatibility, created @add-feature command for dynamic roadmap updates, and enriched product.md with synthesized knowledge to maintain project consistency. All documentation now aligned with design-digest synthesis.
+
+### Technical Report
+
+#### Completed Tasks
+- Added table of contents to DEVLOG.md for easier navigation
+- Generated comprehensive PRD.md (630 lines, 15 sections)
+- Created @add-feature command for adding features to existing roadmap
+- Enhanced @prime to properly analyze features.json structure
+- Added Phase 6.5 to @design-digest for product.md enrichment
+- Enriched product.md with synthesized knowledge (non-destructive merge)
+
+#### Command Enhancements
+
+**@add-feature (NEW)**:
+- Add new features to existing features.json roadmap
+- Automatic dependency analysis and cycle detection
+- Generates feature specification file with EARS format
+- Maintains graph integrity (validates dependencies)
+- Updates features.json metadata
+- Compatible with @next for intelligent discovery
+
+**@prime (ENHANCED)**:
+- Reads and analyzes features.json structure
+- Calculates development horizon (ready features)
+- Shows feature breakdown by version and status
+- Identifies next recommended feature with reasoning
+- Displays progress statistics
+
+**@design-digest (ENHANCED - Phase 6.5)**:
+- Added product.md enrichment phase
+- Non-destructive merge strategy
+- Enriches with: technology architecture, feature types, performance targets, constraints, roadmap
+- Preserves original: purpose, vision, users, journey, scope
+- Generates product-enhanced.md for review before applying
+
+#### Documentation Generated
+
+**PRD.md (NEW)**:
+- Executive summary and mission
+- Target users with pain points
+- Complete MVP scope (in/out of scope)
+- 8 user stories (primary + technical)
+- Architecture and design patterns
+- 12-feature breakdown with critical path
+- Complete technology stack
+- API specification
+- Success criteria and validation
+- 4 implementation phases with time estimates
+- Future considerations (V1/V2)
+- 5 key risks with mitigations
+- Table of contents for navigation
+
+**product.md (ENRICHED)**:
+- Added Technology Architecture section (validated stack)
+- Added System Components (data flow, decisions)
+- Added 11 Feature Types with detection strategies
+- Added Performance Targets (time, accuracy, resources)
+- Added Technical Constraints (hardware, software, time)
+- Added Development Roadmap (12 features, critical path)
+- Updated Demo Sprint section with actual features
+- Preserved all original content
+
+### Technical Decisions
+
+1. **Table of Contents for Large Files**: Added TOC to DEVLOG.md and PRD.md for easier navigation. Large markdown files (>500 lines) benefit from linked TOC at top. Improves judge/reviewer experience.
+
+2. **PRD Generation**: Realized @design-digest includes PRD generation (Phase 7) but we didn't execute it yesterday. Generated comprehensive PRD.md separately to fill gap. PRD provides holistic view for judges.
+
+3. **@add-feature Command**: Created new command to add features to existing roadmap dynamically. Enables mid-sprint feature additions without manual JSON editing. Maintains graph integrity with dependency validation.
+
+4. **@prime Enhancement**: Updated to properly analyze features.json structure. Original version assumed different format. Now calculates horizon, shows progress, recommends next feature. Critical for @next workflow.
+
+5. **Product.md Enrichment Strategy**: Decided to enrich product.md with synthesized knowledge rather than leave it as initial draft. Non-destructive merge preserves original vision while adding technical depth. Maintains project consistency - all steering docs now reflect design-digest synthesis.
+
+### Challenges & Solutions
+
+#### Challenge: Project inconsistency between work done and documentation
+**Solution**: Identified that product.md was used as input but never updated with synthesized knowledge. Added Phase 6.5 to @design-digest for non-destructive enrichment. Applied enrichment to current product.md.
+**Impact**: Project now in consistent state - features.json ↔ product.md ↔ tech.md ↔ structure.md all aligned
+
+#### Challenge: Missing PRD despite comprehensive planning
+**Solution**: Realized @design-digest Phase 7 includes PRD generation but wasn't executed. Generated PRD.md separately using @create-prd template with all context from design-digest.
+**Impact**: Complete documentation package for judges (README, PRD, DEVLOG, feature specs)
+
+#### Challenge: @prime incompatible with new feature structure
+**Solution**: Enhanced @prime to read features.json, calculate horizon, show progress breakdown, identify next recommended feature. Now properly integrated with @next workflow.
+**Impact**: Workflow commands work together seamlessly
+
+### Kiro CLI Usage
+
+- **Workflow refinement**: Identified gaps in custom command workflow through systematic review
+- **@devlog-update**: Following proper workflow - documenting session before moving to implementation
+- **Command enhancement**: Updated existing commands (@prime, @design-digest) rather than creating workarounds
+- **Project consistency**: Ensured all documentation reflects actual work done and synthesis completed
+
+### Code Changes
+
+**Files Created** (1):
+- `.kiro/PRD.md` (~630 lines) - Comprehensive Product Requirements Document
+
+**Files Modified** (4):
+- `.kiro/DEVLOG.md` (+TOC, updated for new entry)
+- `.kiro/prompts/add-feature.md` (~400 lines) - NEW command
+- `.kiro/prompts/prime.md` (+enhanced horizon analysis)
+- `.kiro/prompts/design-digest.md` (+Phase 6.5 for product.md enrichment)
+- `.kiro/steering/product.md` (+306 lines enrichment, -41 lines replaced)
+
+**Total Changes**: +~1,400 lines
+
+### Git Activity
+
+**Commits** (5):
+```
+4112189 - feat: Workflow improvements - TOC, @add-feature, enhanced @prime
+475af8e - docs: Generate comprehensive PRD with table of contents
+a773fd9 - feat: Add product.md enrichment to @design-digest (Phase 6.5)
+d1d1ef3 - docs: Enrich product.md with synthesized knowledge from design-digest
+[pending] - docs: Add DEVLOG entry for workflow refinements
+```
+
+### Time Breakdown
+
+- **Gap Analysis**: 0.3 hours (identifying missing pieces)
+- **Command Enhancement**: 0.5 hours (@add-feature, @prime, @design-digest)
+- **Documentation**: 0.5 hours (PRD generation, product.md enrichment)
+- **Consistency Check**: 0.2 hours (verifying alignment)
+- **Total Session Time**: 1.5 hours
+
+### Insights & Learnings
+
+- **Workflow consistency matters**: Identified gaps by systematically reviewing what @design-digest should produce vs what we actually generated. Missing PRD and outdated product.md would confuse judges.
+
+- **Non-destructive enrichment is key**: When updating foundational documents like product.md, preserve original vision while adding synthesized knowledge. Maintains continuity and respects initial design decisions.
+
+- **Command interdependencies**: @prime, @next, @add-feature, @plan-feature, @execute form a workflow chain. Each must be compatible with the others. Updating one often requires updating others.
+
+- **Documentation for judges**: PRD, README, DEVLOG, and feature specs form complete package. Judges need different views: high-level (README), detailed (PRD), process (DEVLOG), technical (feature specs).
+
+- **Table of contents improves UX**: Large markdown files (>500 lines) benefit significantly from linked TOC. Small investment (5 minutes) with high return (easier navigation).
+
+### Project Consistency Achieved
+
+**Aligned Documentation**:
+- ✅ features.json: 12 features with dependencies
+- ✅ product.md: Enriched with technology, features, performance, constraints
+- ✅ tech.md: Complete technology stack and architecture
+- ✅ structure.md: Project organization and conventions
+- ✅ PRD.md: Comprehensive requirements document
+- ✅ README.md: Project overview and setup
+- ✅ DEVLOG.md: Complete development history
+
+**Workflow Commands**:
+- ✅ @design-digest: Includes product.md enrichment (Phase 6.5)
+- ✅ @prime: Analyzes features.json, shows horizon
+- ✅ @next: Selects features intelligently
+- ✅ @add-feature: Adds features dynamically
+- ✅ @plan-feature: Creates implementation plans
+- ✅ @execute: Implements with validation
+- ✅ @devlog-update: Documents progress
+
+### Next Steps
+
+- [ ] Move to implementation phase
+- [ ] Address Grounding DINO + SAM 2 installation issues
+- [ ] Run ML pipeline on local GPU (RTX 5090)
+- [ ] Generate DXF file from demo.tif
+- [ ] Commit DXF to repo
+- [ ] Start frontend implementation with @next → @plan-feature → @execute
 
 ---
