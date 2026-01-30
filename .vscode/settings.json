@@ -1,0 +1,19 @@
+{
+  "git.maxFileCount": 50000,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/venv/**": true,
+    "**/__pycache__/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/dist": true,
+    "**/build": true
+  }
+}
