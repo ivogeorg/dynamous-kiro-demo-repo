@@ -69,7 +69,57 @@ Before completing:
 - ✅ Code follows project conventions
 - ✅ Documentation added/updated as needed
 
-## Output Report
+### 6. Update Feature Status
+
+**Identify the feature** from plan filename or content:
+- Extract feature ID from plan (if named like `[feature-id].md` or mentioned in plan)
+- Locate feature file: `.kiro/features/[feature-id].md`
+
+**Prompt for status update:**
+```
+✅ FEATURE VALIDATION COMPLETE
+
+Feature: [feature-id] - [feature-name]
+All validation checks passed!
+
+Update feature status to 'completed'? (yes/no)
+```
+
+**If yes:**
+- Update YAML frontmatter:
+  ```yaml
+  status: completed
+  completed_date: [current ISO-8601 timestamp]
+  ```
+- Update markdown status field:
+  ```markdown
+  **Status**: completed
+  ```
+- Check off validation checklist items in feature file
+
+### 7. Update Development Log
+
+**Prompt for DEVLOG update:**
+```
+📝 UPDATE DEVELOPMENT LOG
+
+Feature implementation complete! Would you like to update the DEVLOG now?
+(Recommended: capture context while fresh)
+
+Update DEVLOG? (yes/no/later)
+```
+
+**If yes:**
+- Invoke `@devlog-update` with execution context:
+  - Feature ID and name
+  - Technical report (from Phase 8 below)
+  - Conversation history from this session
+  - Git activity during implementation
+
+**If no/later:**
+- Remind: "Run @devlog-update before switching sessions to capture context"
+
+### 8. Generate Technical Report
 
 Provide summary:
 
