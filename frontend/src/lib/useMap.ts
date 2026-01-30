@@ -12,6 +12,8 @@ export function useMap(targetId: string) {
   useEffect(() => {
     if (mapRef.current) return // Already initialized
 
+    console.log('Initializing map with GeoTIFF...')
+
     // Create GeoTIFF layer
     const { layer: geoTiffLayer, source: geoTiffSource } = createGeoTIFFLayer(
       '/data/orthomosaic/demo_cutout.tif'
@@ -37,10 +39,14 @@ export function useMap(targetId: string) {
 
     // Fit view to GeoTIFF extent when loaded
     geoTiffSource.on('change', () => {
-      if (geoTiffSource.getState() === 'ready') {
+      const state = geoTiffSource.getState()
+      console.log('GeoTIFF source state:', state)
+      
+      if (state === 'ready') {
         const view = map.getView()
         
         geoTiffSource.getView().then((viewConfig) => {
+          console.log('GeoTIFF view config:', viewConfig)
           if (viewConfig?.extent) {
             view.fit(viewConfig.extent, {
               padding: [50, 50, 50, 50],
@@ -48,7 +54,11 @@ export function useMap(targetId: string) {
             })
             console.log('✓ GeoTIFF loaded, view fitted to extent')
           }
+        }).catch((error) => {
+          console.error('Error getting GeoTIFF view:', error)
         })
+      } else if (state === 'error') {
+        console.error('GeoTIFF failed to load')
       }
     })
 

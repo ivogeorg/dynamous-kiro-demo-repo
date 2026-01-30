@@ -1,9 +1,9 @@
+/* OpenLayers styles */
+@import 'ol/ol.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* OpenLayers styles */
-@import 'ol/ol.css';
 
 * {
   margin: 0;
