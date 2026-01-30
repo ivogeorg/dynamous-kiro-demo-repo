@@ -17,9 +17,10 @@
 5. [2026-01-30 - Project Structure and ML Pipeline Setup](#2026-01-30---project-structure-and-ml-pipeline-setup)
 6. [2026-01-30 - Workflow Directory Corrections and Manual Validation](#2026-01-30---workflow-directory-corrections-and-manual-validation)
 7. [2026-01-30 - Feature Graph Relocation and Missing Files Generation](#2026-01-30---feature-graph-relocation-and-missing-files-generation)
-8. [2026-01-30 - Interactive Feature Selection Enhancement](#2026-01-30---interactive-feature-selection-enhancement)
+8. [2026-01-30 - Interactive Feature Selection Enhancement](#2026-01-30---interactive-feature-selection-and-enhancement)
 9. [2026-01-30 - Complete Workflow Automation and Vite Setup Fix](#2026-01-30---complete-workflow-automation-and-vite-setup-fix)
 10. [2026-01-30 - Critical Fix: Interactive Commands Break Automation](#2026-01-30---critical-fix-interactive-commands-break-automation)
+11. [2026-01-30 - Performance Fix: Extract @next Script](#2026-01-30---performance-fix-extract-next-script)
 
 ---
 
@@ -1267,5 +1268,81 @@ When interactive command breaks execution:
 - [ ] Monitor for any other interactive command issues
 - [ ] Document any additional forbidden commands discovered
 - [ ] Begin actual feature implementation with safe plan
+
+---
+
+## 2026-01-30 - Performance Fix: Extract @next Script
+
+**Session Duration**: 0.05 hours
+**Branch**: master
+**Commits**: 1
+**Status**: Performance Optimization
+
+### Overview
+
+Fixed performance issue where @next regenerated its Python script every invocation, wasting time and doing redundant work. Extracted script to standalone file `.kiro/scripts/next.py` that's created once and reused forever.
+
+### Technical Report
+
+#### The Problem
+
+**Observation**: Every time @next was invoked, the AI agent regenerated the entire Python script (200+ lines) from scratch, even though the logic never changed.
+
+**Impact**:
+- Wasted 10-20 seconds per invocation
+- Consumed tokens unnecessarily
+- Made @next feel slow and unresponsive
+- Redundant work on every call
+
+**Root Cause**: The @next prompt contained the full Python script inline, so the agent had to "write" it every time to execute it.
+
+#### The Solution
+
+**Extracted script to permanent file:**
+- Created `.kiro/scripts/next.py` with all feature analysis logic
+- Made it executable (`chmod +x`)
+- Updated @next prompt to simply execute: `python3 .kiro/scripts/next.py`
+
+**Script outputs:**
+- Development horizon (ready features)
+- Recommended feature with justification
+- Other ready features (numbered list)
+- Blocked features
+- Special markers for parsing: `__RECOMMENDED_FEATURE__` and `__HORIZON__`
+
+#### Files Modified
+- `.kiro/prompts/next.md` (replaced inline script with execution command)
+- `.kiro/scripts/next.py` (new standalone script)
+
+### Time Breakdown
+
+- **Script extraction**: 0.03 hours
+- **Testing and verification**: 0.02 hours
+- **Total Session Time**: 0.05 hours
+
+### Insights & Learnings
+
+- **Scripts should be artifacts, not generated code**: When logic is stable and reusable, extract it to a file. Don't make the AI regenerate it every time.
+
+- **Inline code is for examples, not execution**: Inline code in prompts is great for showing patterns, but terrible for actual execution. Extract to files.
+
+- **Performance compounds**: 20 seconds per @next invocation × 12 features = 4 minutes saved. In a 24-hour sprint, every minute counts.
+
+- **Easier maintenance**: Bugs in the script can now be fixed by editing one file, not updating the prompt and regenerating.
+
+### Pattern for Other Commands
+
+This pattern should be applied to other commands with complex logic:
+- **@design-digest**: Extract feature extraction logic
+- **@devlog-update**: Extract DEVLOG formatting logic
+- **@add-feature**: Extract dependency validation logic
+
+**Rule of thumb**: If code is >50 lines and stable, extract to `.kiro/scripts/`.
+
+### Next Steps
+
+- [ ] Test @next performance improvement in implementation session
+- [ ] Consider extracting other command scripts
+- [ ] Begin feature implementation with faster workflow
 
 ---
