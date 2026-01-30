@@ -44,7 +44,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When the application loads, the system shall display a single-page interface with map container and DXF pane ready for content",
-      "dependencies": ["infra-dev-setup-00001"],
+      "dependencies": [
+        "infra-dev-setup-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -83,7 +85,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When the main page loads, the system shall initialize an OpenLayers map with proper projection and base configuration",
-      "dependencies": ["ui-main-page-00001"],
+      "dependencies": [
+        "ui-main-page-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -122,7 +126,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When the map is initialized, the system shall load and render the hardcoded COG file with tiled streaming and proper geospatial positioning",
-      "dependencies": ["ui-map-init-00001"],
+      "dependencies": [
+        "ui-map-init-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -161,7 +167,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When the user interacts with the map, the system shall provide smooth pan (drag) and zoom (scroll/pinch) controls",
-      "dependencies": ["ui-cog-render-00001"],
+      "dependencies": [
+        "ui-cog-render-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -195,7 +203,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When the backend starts, the system shall load Grounding DINO and SAM 2 models with proper VRAM management and be ready for inference",
-      "dependencies": ["infra-dev-setup-00001"],
+      "dependencies": [
+        "infra-dev-setup-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -234,7 +244,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When processing the orthomosaic, the system shall detect road centerlines using Grounding DINO prompts and SAM 2 segmentation",
-      "dependencies": ["ml-dino-sam2-setup-00001"],
+      "dependencies": [
+        "ml-dino-sam2-setup-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -273,7 +285,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When processing the orthomosaic, the system shall detect road curbs using Grounding DINO prompts and SAM 2 segmentation",
-      "dependencies": ["ml-dino-sam2-setup-00001"],
+      "dependencies": [
+        "ml-dino-sam2-setup-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -312,7 +326,10 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When masks are generated, the system shall convert road centerline and curb masks into clean line/polyline CAD primitives",
-      "dependencies": ["ml-road-centerline-00001", "ml-road-curb-00001"],
+      "dependencies": [
+        "ml-road-centerline-00001",
+        "ml-road-curb-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -351,7 +368,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When vectorization is complete, the system shall generate a valid DXF file with road features on appropriate layers",
-      "dependencies": ["geom-vectorize-roads-00001"],
+      "dependencies": [
+        "geom-vectorize-roads-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -390,7 +409,10 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When DXF is generated, the system shall render CAD vectors as overlay on orthomosaic and display in DXF pane",
-      "dependencies": ["geom-dxf-generate-00001", "ui-pan-zoom-00001"],
+      "dependencies": [
+        "geom-dxf-generate-00001",
+        "ui-pan-zoom-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",
@@ -429,7 +451,9 @@
       "version": "Demo",
       "moscow": "Must-have",
       "description": "When user clicks a feature on map or in DXF pane, the system shall highlight it in both views and show download button",
-      "dependencies": ["ui-dxf-overlay-00001"],
+      "dependencies": [
+        "ui-dxf-overlay-00001"
+      ],
       "tasks": [
         {
           "id": "task-001",

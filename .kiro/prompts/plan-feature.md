@@ -14,6 +14,22 @@ Transform a feature request into a **comprehensive implementation plan** through
 
 **Key Philosophy**: Context is King. The plan must contain ALL information needed for implementation - patterns, mandatory reading, documentation, validation commands - so the execution agent succeeds on the first attempt.
 
+**⚠️ CRITICAL: NO INTERACTIVE COMMANDS**
+
+Plans must ONLY contain **non-interactive commands**. Interactive commands (that wait for user input) will hang execution because prompts don't display to the user.
+
+**FORBIDDEN Commands:**
+- `npm create` / `npm init` (without `-y` flag)
+- `git commit` (without `-m` flag)
+- Any command with interactive prompts or wizards
+- Commands that ask for confirmation without `-y` / `--yes` / `--force` flags
+
+**REQUIRED Approach:**
+- Use non-interactive flags: `-y`, `--yes`, `--no-interaction`, `--force`
+- Create files manually instead of using scaffolding tools
+- Break interactive commands into explicit file creation steps
+- Document what would be created, then create it explicitly
+
 ## Planning Process
 
 ### Phase 1: Feature Understanding
