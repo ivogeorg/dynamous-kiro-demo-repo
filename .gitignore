@@ -27,7 +27,7 @@ backend/output/
 *.dxf
 
 # Large input files (not in repo - too large for GitHub LFS)
-data/orthomosaic/*.tif
+data/orthomosaic/AVONDALE_ORTHO.tif
 data/pointcloud/*.las
 data/pointcloud/*.laz
 
