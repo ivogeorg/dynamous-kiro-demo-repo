@@ -62,7 +62,7 @@ So that <benefit/value>
 
 - Catalog external libraries relevant to feature
 - Understand how libraries are integrated (check imports, configs)
-- Find relevant documentation in docs/, ai_docs/, .agents/reference or ai-wiki if available
+- Find relevant documentation in docs/, ai_docs/, .kiro/reference or ai-wiki if available
 - Note library versions and compatibility requirements
 
 **4. Testing Patterns**
@@ -374,12 +374,12 @@ Execute every command to ensure zero regressions and 100% feature correctness.
 
 ## Output Format
 
-**Filename**: `.agents/plans/{kebab-case-descriptive-name}.md`
+**Filename**: `.kiro/plans/{kebab-case-descriptive-name}.md`
 
 - Replace `{kebab-case-descriptive-name}` with short, descriptive feature name
 - Examples: `add-user-authentication.md`, `implement-search-api.md`, `refactor-database-layer.md`
 
-**Directory**: Create `.agents/plans/` if it doesn't exist
+**Directory**: Create `.kiro/plans/` if it doesn't exist
 
 ## Quality Criteria
 

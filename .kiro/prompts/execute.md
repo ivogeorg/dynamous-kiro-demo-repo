@@ -69,7 +69,36 @@ Before completing:
 - ✅ Code follows project conventions
 - ✅ Documentation added/updated as needed
 
-### 6. Update Feature Status
+### 6. Manual Validation (User Required)
+
+**Stop and prompt user:**
+```
+🧪 AUTOMATED VALIDATION COMPLETE
+
+All automated checks passed. Please perform manual validation:
+
+1. Review the changes:
+   - Check files created/modified
+   - Verify code quality and conventions
+   - Test the feature manually if applicable
+
+2. Run any additional tests you want
+
+3. Confirm the feature works as expected
+
+Did manual validation succeed? (yes/no)
+```
+
+**If no:**
+- Ask user what failed
+- Fix the issues
+- Return to validation step
+- Do NOT proceed to status update
+
+**If yes:**
+- Proceed to status update
+
+### 7. Update Feature Status
 
 **Identify the feature** from plan filename or content:
 - Extract feature ID from plan (if named like `[feature-id].md` or mentioned in plan)
@@ -97,7 +126,7 @@ Update feature status to 'completed'? (yes/no)
   ```
 - Check off validation checklist items in feature file
 
-### 7. Update Development Log
+### 8. Update Development Log
 
 **Prompt for DEVLOG update:**
 ```
@@ -112,14 +141,14 @@ Update DEVLOG? (yes/no/later)
 **If yes:**
 - Invoke `@devlog-update` with execution context:
   - Feature ID and name
-  - Technical report (from Phase 8 below)
+  - Technical report (from Phase 9 below)
   - Conversation history from this session
   - Git activity during implementation
 
 **If no/later:**
 - Remind: "Run @devlog-update before switching sessions to capture context"
 
-### 8. Generate Technical Report
+### 9. Generate Technical Report
 
 Provide summary:
 

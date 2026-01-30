@@ -189,7 +189,7 @@ Invoking @plan-feature to create implementation plan...
 - Pass feature-id as argument
 - Pass feature file path: `.kiro/features/[feature-id].md`
 - @plan-feature reads feature file for context
-- Generates plan in `.agents/plans/[feature-id].md`
+- Generates plan in `.kiro/plans/[feature-id].md`
 
 ### Phase 5: Update Feature Status
 
@@ -198,7 +198,7 @@ Invoking @plan-feature to create implementation plan...
 ```
 📝 PLAN CREATED
 
-Plan file: .agents/plans/[feature-id].md
+Plan file: .kiro/plans/[feature-id].md
 
 Update feature status to 'in-progress'? (yes/no)
 ```
@@ -214,8 +214,8 @@ Update feature status to 'in-progress'? (yes/no)
 🚀 READY TO IMPLEMENT
 
 Next steps:
-  1. Review plan: .agents/plans/[feature-id].md
-  2. Execute plan: @execute .agents/plans/[feature-id].md
+  1. Review plan: .kiro/plans/[feature-id].md
+  2. Execute plan: @execute .kiro/plans/[feature-id].md
   3. Or return to horizon: @next
 
 What would you like to do?
@@ -241,7 +241,7 @@ Recommendation: Complete in-progress features first.
 In Progress:
   • [feature-id-x] - [Feature Name]
     Started: [date]
-    Plan: .agents/plans/[feature-id-x].md
+    Plan: .kiro/plans/[feature-id-x].md
 ```
 
 ### All Features Completed
@@ -285,9 +285,9 @@ After successful selection and planning:
 Feature: [feature-id] - [Feature Name]
 Priority: [Must-have] ([Demo])
 Status: not-started → in-progress
-Plan: .agents/plans/[feature-id].md
+Plan: .kiro/plans/[feature-id].md
 
-Ready to execute: @execute .agents/plans/[feature-id].md
+Ready to execute: @execute .kiro/plans/[feature-id].md
 ```
 
 ## Success Criteria
