@@ -3,9 +3,9 @@ id: infra-dev-setup-00001
 name: Development Environment Setup
 version: Demo
 moscow: Must-have
-status: not-started
-started_date: null
-completed_date: null
+status: completed
+started_date: 2026-01-30T20:35:46Z
+completed_date: 2026-01-30T20:38:02Z
 ---
 
 # Development Environment Setup

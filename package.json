@@ -1,0 +1,11 @@
+{
+  "name": "kaldic",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && source venv/bin/activate && python main.py",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+  }
+}
