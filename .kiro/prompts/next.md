@@ -8,25 +8,86 @@ Analyze the feature dependency graph, calculate the development horizon (ready-t
 
 ## Implementation
 
-Run the feature analysis script:
+Execute the feature analysis script:
 
-```python
-#!/usr/bin/env python3
-"""Analyze feature graph and recommend next feature."""
+```bash
+python3 .kiro/scripts/next.py
+```
 
-import json
-import sys
-from collections import defaultdict
+The script outputs:
+- Development horizon (ready features)
+- Recommended feature with justification
+- Other ready features (numbered)
+- Blocked features
 
-def load_features():
-    """Load .kiro/features.json."""
-    try:
-        with open('.kiro/features.json', 'r') as f:
-            return json.load(f)['features']
-    except FileNotFoundError:
-        print("❌ ERROR: .kiro/features.json not found\n")
-        print("Run @design-digest first to generate feature roadmap.\n")
-        sys.exit(1)
+## User Interaction
+
+After displaying the horizon, **prompt the user for selection:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SELECT FEATURE TO PLAN:
+
+  [R] Recommended: [feature-id]
+  [1-N] Other ready features (by number from list above)
+  [Q] Quit (return to prompt)
+
+Your choice:
+```
+
+**Handle user input:**
+- **"R" or "r" or empty (Enter)**: Use recommended feature
+- **Number (1-N)**: Use corresponding feature from "OTHER READY FEATURES" list
+- **"Q" or "q"**: Exit without planning
+
+**After valid selection:**
+1. Extract selected feature ID
+2. Display confirmation:
+   ```
+   📝 CREATING PLAN FOR: [feature-id] - [Feature Name]
+   ```
+3. **Automatically invoke @plan-feature**:
+   ```
+   @plan-feature [feature-id]
+   ```
+4. **After plan is created, prompt for execution:**
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+   📋 PLAN CREATED: .kiro/plans/[feature-id].md
+   
+   Execute this plan now? (yes/no)
+   ```
+   
+   **If yes:**
+   - Update feature status to 'in-progress' in `.kiro/features.json` and `.kiro/features/[feature-id].md`
+   - Set `started_date` to current ISO-8601 timestamp
+   - Display:
+     ```
+     🚀 STARTING IMPLEMENTATION
+     
+     Feature: [feature-id] - [Feature Name]
+     Status: not-started → in-progress
+     Started: [timestamp]
+     ```
+   - **Automatically invoke @execute**:
+     ```
+     @execute .kiro/plans/[feature-id].md
+     ```
+   
+   **If no:**
+   - Display:
+     ```
+     💡 Plan saved. Execute later with:
+        @execute .kiro/plans/[feature-id].md
+     ```
+   - Return to prompt
+
+**Invalid input:**
+```
+❌ Invalid selection. Please enter R, a number (1-N), or Q.
+```
 
 def calculate_horizon(features):
     """Find features ready to implement."""
