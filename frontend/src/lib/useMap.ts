@@ -4,7 +4,13 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
 import { fromLonLat } from 'ol/proj'
+import { register } from 'ol/proj/proj4'
+import proj4 from 'proj4'
 import { createGeoTIFFLayer } from './loadGeoTIFF'
+
+// Register EPSG:6405 (NAD83(2011) / Arizona Central (ft))
+proj4.defs('EPSG:6405', '+proj=tmerc +lat_0=31 +lon_0=-111.916666666667 +k=0.9999 +x_0=213360 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=us-ft +no_defs +type=crs')
+register(proj4)
 
 export function useMap(targetId: string) {
   const mapRef = useRef<Map | null>(null)
