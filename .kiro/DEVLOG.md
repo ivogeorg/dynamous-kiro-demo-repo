@@ -15,6 +15,7 @@
 3. [2026-01-29 - Feature Roadmap Generation with @design-digest](#2026-01-29---feature-roadmap-generation-with-design-digest)
 4. [2026-01-30 - Workflow Refinements and Project Consistency](#2026-01-30---workflow-refinements-and-project-consistency)
 5. [2026-01-30 - Project Structure and ML Pipeline Setup](#2026-01-30---project-structure-and-ml-pipeline-setup)
+6. [2026-01-30 - Workflow Directory Corrections and Manual Validation](#2026-01-30---workflow-directory-corrections-and-manual-validation)
 
 ---
 
@@ -804,5 +805,76 @@ dc2c961 - feat: Add project structure and ML pipeline scripts
 - [ ] Implement features 1-5 (Foundation + Visualization)
 - [ ] Pull masks and implement geometrization
 - [ ] Complete integration and Docker setup
+
+---
+
+## 2026-01-30 - Workflow Directory Corrections and Manual Validation
+
+**Session Duration**: 0.1 hours
+**Branch**: master
+**Commits**: 2
+**Status**: Workflow Refinement
+
+### Overview
+
+Fixed incorrect directory references throughout workflow commands and added mandatory manual validation step to @execute. All workflow outputs now properly organized under `.kiro/` hierarchy, and feature completion requires explicit user confirmation after manual testing.
+
+### Technical Report
+
+#### Completed Tasks
+- Fixed `.agents/` → `.kiro/plans/` in @next (5 occurrences)
+- Fixed `.agents/` → `.kiro/plans/` in @plan-feature (2 occurrences)
+- Fixed `.agents/reference` → `.kiro/reference` in @plan-feature
+- Fixed `.agents/system-reviews/` → `.kiro/system-reviews/` in @system-review
+- Fixed `.agents/execution-reports/` → `.kiro/execution-reports/` in @execution-report
+- Fixed `.agents/code-reviews/` → `.kiro/code-reviews/` in @code-review
+- Added Phase 6 "Manual Validation (User Required)" to @execute
+- Created `.kiro/plans/` directory with .gitkeep
+
+#### Files Modified
+- `.kiro/prompts/next.md`
+- `.kiro/prompts/plan-feature.md`
+- `.kiro/prompts/system-review.md`
+- `.kiro/prompts/execution-report.md`
+- `.kiro/prompts/code-review.md`
+- `.kiro/prompts/execute.md`
+
+#### Workflow Improvements
+
+**Directory Organization**:
+- All workflow outputs now under `.kiro/` for consistency
+- Plans: `.kiro/plans/[feature-id].md`
+- Reviews: `.kiro/system-reviews/`, `.kiro/code-reviews/`
+- Reports: `.kiro/execution-reports/`
+- Reference: `.kiro/reference/` (for future use)
+
+**Manual Validation Gate**:
+- @execute now stops after automated validation
+- Prompts user to manually verify feature works
+- Requires explicit "yes" before marking feature complete
+- If "no", asks what failed and returns to fixing
+- Prevents premature status updates
+
+### Time Breakdown
+
+- **Directory Reference Fixes**: 0.05 hours
+- **Manual Validation Addition**: 0.03 hours
+- **Testing and Verification**: 0.02 hours
+- **Total Session Time**: 0.1 hours
+
+### Insights & Learnings
+
+- **Consistency matters**: Having all workflow outputs under `.kiro/` makes project structure cleaner and more predictable. Future multi-agentic work can use `.kiro/agents/` without confusion.
+
+- **Human-in-the-loop validation is critical**: Automated tests catch syntax errors, but only humans can verify features work as intended. Gating status updates behind manual confirmation prevents false positives.
+
+- **Small fixes compound**: These corrections seem minor but prevent confusion during implementation phase. Better to fix now than debug directory issues mid-sprint.
+
+### Next Steps
+
+- [ ] Start implementation phase in new session
+- [ ] Test @prime → @next → @plan-feature → @execute workflow
+- [ ] Verify manual validation prompts work correctly
+- [ ] Begin feature implementation with clean workflow
 
 ---
