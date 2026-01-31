@@ -18,6 +18,7 @@ import sys
 import os
 import numpy as np
 import torch
+import os
 from PIL import Image
 from groundingdino.util.inference import load_model, predict
 from sam2.build_sam import build_sam2
@@ -102,15 +103,33 @@ def main(input_path, output_dir):
     
     # Load Grounding DINO
     print("\n2. Loading Grounding DINO...")
+    
+    # Use paths relative to this script's directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(script_dir, "groundingdino", "config", "GroundingDINO_SwinT_OGC.py")
+    checkpoint_path = os.path.join(script_dir, "weights", "groundingdino_swint_ogc.pth")
+    
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Config not found: {config_path}\n"
+                                f"Clone Grounding DINO repo and copy config folder here.")
+    if not os.path.exists(checkpoint_path):
+        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}\n"
+                                f"Download from: https://github.com/IDEA-Research/GroundingDINO/releases")
+    
     dino_model = load_model(
-        model_config_path="groundingdino/config/GroundingDINO_SwinT_OGC.py",
-        model_checkpoint_path="weights/groundingdino_swint_ogc.pth"
+        model_config_path=config_path,
+        model_checkpoint_path=checkpoint_path
     )
     print("   ✓ Grounding DINO loaded")
     
     # Load SAM 2
     print("\n3. Loading SAM 2...")
-    sam2_checkpoint = "weights/sam2_hiera_large.pt"
+    sam2_checkpoint = os.path.join(script_dir, "weights", "sam2_hiera_large.pt")
+    
+    if not os.path.exists(sam2_checkpoint):
+        raise FileNotFoundError(f"SAM 2 checkpoint not found: {sam2_checkpoint}\n"
+                                f"Download from: https://github.com/facebookresearch/segment-anything-2")
+    
     model_cfg = "sam2_hiera_l.yaml"
     sam2_model = build_sam2(model_cfg, sam2_checkpoint, device="cuda")
     predictor = SAM2ImagePredictor(sam2_model)

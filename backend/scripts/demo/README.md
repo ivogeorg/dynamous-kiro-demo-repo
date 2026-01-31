@@ -31,18 +31,50 @@ pip install -r requirements-ml.txt
 pip install git+https://github.com/facebookresearch/segment-anything-2.git
 ```
 
+## Setup Directory Structure
+
+**Required structure** (relative to `backend/scripts/demo/`):
+
+```
+backend/scripts/demo/
+├── run_ml_pipeline.py
+├── cut_region.py
+├── requirements-ml.txt
+├── groundingdino/          # Clone from GitHub
+│   └── config/
+│       └── GroundingDINO_SwinT_OGC.py
+└── weights/                # Download model weights
+    ├── groundingdino_swint_ogc.pth
+    └── sam2_hiera_large.pt
+```
+
+### Get Grounding DINO Config
+
+```powershell
+# Clone Grounding DINO repo (just for config files)
+git clone https://github.com/IDEA-Research/GroundingDINO.git temp_dino
+# Copy config folder
+cp -r temp_dino/groundingdino/config groundingdino/
+# Clean up
+rm -rf temp_dino
+```
+
+**Or manually**: Download `GroundingDINO_SwinT_OGC.py` from [GitHub](https://github.com/IDEA-Research/GroundingDINO/tree/main/groundingdino/config) and place in `groundingdino/config/`
+
 ## Download Model Weights
 
 ```powershell
 # Create weights directory
 mkdir weights
 
-# Download Grounding DINO weights
+# Download Grounding DINO weights (~700 MB)
 # https://github.com/IDEA-Research/GroundingDINO/releases
+# File: groundingdino_swint_ogc.pth
 # Save to: weights/groundingdino_swint_ogc.pth
 
-# Download SAM 2 weights
+# Download SAM 2 weights (~900 MB)
 # https://github.com/facebookresearch/segment-anything-2/releases
+# File: sam2_hiera_large.pt
 # Save to: weights/sam2_hiera_large.pt
 ```
 
