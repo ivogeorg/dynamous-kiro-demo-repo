@@ -5,8 +5,8 @@ torch>=2.2.0
 torchvision>=0.17.0
 torchaudio>=2.2.0
 
-# Hugging Face
-transformers>=4.38.0
+# Hugging Face (IMPORTANT: Grounding DINO requires older version)
+transformers==4.27.4
 
 # Computer vision
 opencv-python>=4.9.0
