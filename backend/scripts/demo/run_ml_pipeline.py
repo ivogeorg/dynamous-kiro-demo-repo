@@ -28,6 +28,9 @@ def load_image(image_path):
     from PIL import Image
     import numpy as np
     
+    # Disable decompression bomb check for large orthomosaics
+    Image.MAX_IMAGE_PIXELS = None
+    
     # Open with PIL (works with GeoTIFF)
     img = Image.open(image_path)
     
