@@ -24,20 +24,17 @@ from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
 
 def load_image(image_path):
-    """Load image from GeoTIFF."""
-    from osgeo import gdal
+    """Load image from GeoTIFF using PIL (simpler than GDAL)."""
+    from PIL import Image
+    import numpy as np
     
-    ds = gdal.Open(image_path)
-    if ds is None:
-        raise ValueError(f"Could not open {image_path}")
+    # Open with PIL (works with GeoTIFF)
+    img = Image.open(image_path)
     
-    # Read RGB bands (assuming bands 1,2,3 are RGB)
-    r = ds.GetRasterBand(1).ReadAsArray()
-    g = ds.GetRasterBand(2).ReadAsArray()
-    b = ds.GetRasterBand(3).ReadAsArray()
+    # Convert to RGB numpy array
+    rgb = np.array(img.convert('RGB'))
     
-    # Stack to RGB
-    rgb = np.stack([r, g, b], axis=-1)
+    return rgb
     
     # Convert to uint8 if needed
     if rgb.dtype != np.uint8:

@@ -12,9 +12,9 @@ transformers>=4.38.0
 opencv-python>=4.9.0
 pillow>=10.0.0
 
-# Geospatial
-gdal>=3.8.0
-rasterio>=1.3.9
+# Geospatial (REMOVED - use PIL instead for easier Windows install)
+# gdal>=3.8.0
+# rasterio>=1.3.9
 
 # Numerical
 numpy>=1.26.0
