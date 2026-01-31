@@ -33,3 +33,4 @@ data/pointcloud/*.laz
 
 # Logs
 *.log
+*.msk
