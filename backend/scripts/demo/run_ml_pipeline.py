@@ -106,15 +106,36 @@ def main(input_path, output_dir):
     
     # Use paths relative to this script's directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(script_dir, "groundingdino", "config", "GroundingDINO_SwinT_OGC.py")
-    checkpoint_path = os.path.join(script_dir, "weights", "groundingdino_swint_ogc.pth")
     
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Config not found: {config_path}\n"
-                                f"Clone Grounding DINO repo and copy config folder here.")
-    if not os.path.exists(checkpoint_path):
-        raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}\n"
+    # Try to find any Grounding DINO checkpoint
+    weights_dir = os.path.join(script_dir, "weights")
+    dino_checkpoints = [f for f in os.listdir(weights_dir) if f.startswith('groundingdino') and (f.endswith('.pth') or f.endswith('.pt'))]
+    
+    if not dino_checkpoints:
+        raise FileNotFoundError(f"No Grounding DINO checkpoint found in {weights_dir}\n"
                                 f"Download from: https://github.com/IDEA-Research/GroundingDINO/releases")
+    
+    checkpoint_path = os.path.join(weights_dir, dino_checkpoints[0])
+    print(f"   Using checkpoint: {dino_checkpoints[0]}")
+    
+    # Config file (try multiple variants)
+    config_variants = [
+        "GroundingDINO_SwinT_OGC.py",
+        "GroundingDINO_SwinB_cfg.py",
+        "GroundingDINO_SwinB.py"
+    ]
+    
+    config_path = None
+    for variant in config_variants:
+        test_path = os.path.join(script_dir, "groundingdino", "config", variant)
+        if os.path.exists(test_path):
+            config_path = test_path
+            break
+    
+    if not config_path:
+        raise FileNotFoundError(f"Config not found in groundingdino/config/\n"
+                                f"Tried: {config_variants}\n"
+                                f"Clone Grounding DINO repo and copy config folder here.")
     
     dino_model = load_model(
         model_config_path=config_path,
