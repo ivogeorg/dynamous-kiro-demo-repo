@@ -50,10 +50,10 @@ gdal_translate -srcwin 11352 39015 32381 32381 \
 ```bash
 git add data/orthomosaic/demo_region.tif
 git commit -m "feat: Add 32K demo region for ML pipeline (500MB, under LFS limit)"
-git push
+# NOTIFY USER: Ready to push
 ```
 
-**Verify**: No LFS errors (file is under 2GB)
+**⚠️ Note**: Notify user when commits are ready to push (GitHub credentials required).
 
 ---
 
@@ -297,6 +297,7 @@ Due to GitHub LFS 2GB per-file limit:
 - **Verify file sizes**: Before committing large files, check size
 - **Test frequently**: Ensure each feature works before marking complete
 - **Update DEVLOG**: Document decisions and challenges as you go
+- **⚠️ Git Push**: Notify user when commits are ready to push (GitHub credentials required)
 
 ---
 
