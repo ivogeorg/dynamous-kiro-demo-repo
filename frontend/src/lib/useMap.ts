@@ -7,6 +7,7 @@ import { fromLonLat, transformExtent } from 'ol/proj'
 import { register } from 'ol/proj/proj4'
 import proj4 from 'proj4'
 import { createGeoTIFFLayer } from './loadGeoTIFF'
+import { addDXFLayer } from './addDXFLayer'
 
 // Register EPSG:6405 (NAD83(2011) / Arizona Central (ft))
 proj4.defs('EPSG:6405', '+proj=tmerc +lat_0=31 +lon_0=-111.916666666667 +k=0.9999 +x_0=700000 +y_0=0 +ellps=GRS80 +units=ft +no_defs +type=crs')
@@ -81,6 +82,10 @@ export function useMap(targetId: string) {
             console.log('✓ GeoTIFF loaded, view fitted to extent')
             console.log('Current center:', view.getCenter())
             console.log('Current zoom:', view.getZoom())
+            
+            // Add DXF overlay after map is ready
+            addDXFLayer(map)
+            console.log('✓ DXF overlay added')
           }
         }).catch((error) => {
           console.error('Error getting GeoTIFF view:', error)

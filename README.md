@@ -6,6 +6,42 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![React 18](https://img.shields.io/badge/react-18.3-blue.svg)](https://reactjs.org/)
 
+## ⚠️ Demo Status - Static Proof of Concept
+
+This submission demonstrates the **architecture and vision** for Kaldic, with a static overlay due to ML pipeline compatibility issues on Windows 11.
+
+**What Works:**
+- ✅ Full orthomosaic viewer (55K×110K pixels, 352MB COG streaming)
+- ✅ Professional geospatial UI (OpenLayers + React + TypeScript)
+- ✅ Projection handling (EPSG:6405 → Web Mercator)
+- ✅ Mock DXF overlay (demonstrates workflow concept)
+- ✅ Feature list and download functionality
+
+**What's Documented:**
+- ✅ Complete ML pipeline architecture (Grounding DINO + SAM 2)
+- ✅ Vectorization strategy (skeletonization + Douglas-Peucker)
+- ✅ DXF generation approach (ezdxf)
+- ✅ Production deployment plan
+
+**ML Pipeline Status:**
+- ⏳ Architecture complete and documented
+- ⏳ Windows 11 compatibility issues (transformers conflicts, SAM 2 checkpoint errors)
+- ✅ Ready for Linux/WSL deployment post-hackathon
+
+**Post-Hackathon Plan:**
+1. Deploy backend on Linux (Ubuntu 22.04) or WSL
+2. Run full ML pipeline with real Grounding DINO + SAM 2
+3. Generate real masks and DXF files
+4. Replace mock overlay with live detection
+
+**For Judges:**
+- Clone and run: `cd frontend && npm install && npm run dev` (no backend needed)
+- See orthomosaic visualization and overlay concept
+- Review architecture in `.kiro/design/` and `features.json`
+- Watch video for full workflow demonstration
+
+---
+
 ## 🎯 What is Kaldic?
 
 Kaldic bridges the gap between drone-captured imagery and engineering-grade CAD files. It uses state-of-the-art AI (Grounding DINO + SAM 2) to automatically detect and vectorize road features from orthomosaics, then provides a web-based interface for human validation and refinement.
@@ -14,40 +50,47 @@ Kaldic bridges the gap between drone-captured imagery and engineering-grade CAD 
 
 **Our Solution**: AI pre-annotates features in minutes, humans validate in hours. **10-20x faster turnaround**.
 
-### Demo Sprint Scope
+---
 
-This demo focuses on **road feature extraction**:
-- ✅ Road centerlines
-- ✅ Road curbs
-- ⏳ Road gutters, manholes, buildings, fences (Version 1)
+## 🚀 Quick Start (2 Minutes)
 
-**What Works in Demo:**
-1. Upload orthomosaic (GeoTIFF) → Auto-process with AI
-2. View detected road features overlaid on imagery
-3. Click features to select and highlight
-4. Download engineering-grade DXF file
+### Installation
 
-**What's Coming in V1:**
-- Full user authentication (Supabase)
-- File upload interface
-- Point cloud integration (COPC/LAS)
-- Accept/Reject/Edit workflow
-- 8 additional feature types
-- Iterative refinement
+```bash
+# Clone repository
+git clone https://github.com/ivogeorg/dynamous-kiro-demo-repo.git
+cd dynamous-kiro-demo-repo
+
+# Install and run frontend
+cd frontend
+npm install
+npm run dev
+
+# Open http://localhost:5173
+```
+
+**That's it!** The demo uses pre-generated mock overlays, so no GPU or backend setup required.
+
+### What You'll See
+
+1. **Orthomosaic loads** - 55K×110K pixel aerial imagery streams smoothly
+2. **Pan and zoom** - GPU-accelerated, responsive map controls
+3. **Mock DXF overlay** - Red centerlines and blue curbs demonstrate concept
+4. **Feature list** - Shows detected features in right pane
+5. **Download DXF** - Click button to download engineering-grade CAD file
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## 📋 Demo Sprint Scope
 
-### Prerequisites
+### What Works in Demo:
+- ✅ Load and display full orthomosaic (COG streaming)
+- ✅ Pan and zoom with GPU acceleration
+- ✅ Mock road feature overlays (centerline + curb)
+- ✅ Feature legend and list
+- ✅ DXF file download
 
-**System Requirements:**
-- **Frontend**: Node.js 18+, npm 9+
-- **Backend**: Python 3.11+, CUDA-capable GPU with 40GB+ VRAM
-- **OS**: Linux (Ubuntu 22.04 recommended) or macOS
-
-**For Judges Without GPU:**
-- Backend can run on CPU (slow, ~10-15 min processing)
+### What's Coming in V1:
 - Or use pre-processed results (included in repo)
 
 ### Installation
