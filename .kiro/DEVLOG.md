@@ -1867,3 +1867,117 @@ c59d7aa - fix: Correct EPSG:6405 proj4 definition (false_easting=700000)
 ---
 
 **Status**: COG rendering complete, pivot executed, ready for ML pipeline. 8 hours to submission. 🚀
+
+---
+
+## 2026-01-30 20:45 - PIVOT 02: ML Pipeline Abandoned, Static Demo Strategy
+
+### ML Pipeline Failure on Windows 11
+
+**Context**: Attempted to set up Grounding DINO + SAM 2 on Windows 11 laptop (RTX 5090, no WSL) for 2+ hours. Multiple critical blockers encountered.
+
+**What Worked:**
+- ✅ GPU recognized (NVIDIA RTX 5090)
+- ✅ PyTorch 2.2 with CUDA 12.1 installed successfully
+- ✅ Basic imports working (`import torch`, `torch.cuda.is_available()`)
+
+**What Failed:**
+
+**1. Grounding DINO Issues:**
+- **transformers version conflicts**: Grounding DINO requires `transformers==4.27.4`, but SAM 2 needs `transformers>=4.30`
+- **Config/weights mismatch**: Downloaded SwinB weights but repo had SwinT config, causing checkpoint size errors
+- **Multiple config variants**: `GroundingDINO_SwinT_OGC.py`, `GroundingDINO_SwinB_cfg.py`, `GroundingDINO_SwinB.py` - unclear which to use
+- **Auto-detection attempts**: Tried to auto-detect checkpoint and config, still failed with key mismatches
+
+**2. SAM 2 Issues:**
+- **Missing checkpoint keys**: `RuntimeError: Error(s) in loading state_dict for SAM2Base`
+- **Installation requires WSL**: Official docs recommend WSL on Windows, direct installation problematic
+- **No stable releases**: GitHub repo has no releases, only development checkpoints
+- **Memory management unclear**: Documentation sparse on sliding window memory reset
+
+**3. GDAL Issues:**
+- **Installation failures**: `pip install GDAL` failed on Windows (C++ build errors)
+- **Workaround attempted**: Replaced with PIL for image loading
+- **rasterio also failed**: Depends on GDAL, same build issues
+
+**Time Lost**: ~2 hours (25% of remaining time)
+
+**Root Cause**: Research projects (Grounding DINO, SAM 2) are not production-ready packages. They assume Linux environment, specific dependency versions, and manual setup. Windows 11 without WSL is not a supported configuration.
+
+### Decision: Pivot to Static Demo
+
+**Rationale:**
+1. **Time constraint**: 3 hours remaining, cannot afford more debugging
+2. **Concept demonstration**: Mock overlay still shows the workflow and vision
+3. **Architecture value**: Complete ML pipeline documented, ready for Linux deployment
+4. **Judge understanding**: Without overlay, concept will be lost on judges
+
+**What Static Demo Shows:**
+- ✅ Full orthomosaic viewer (55K×110K pixels, COG streaming)
+- ✅ Professional geospatial UI (React + OpenLayers + TypeScript)
+- ✅ Projection handling (EPSG:6405 → Web Mercator)
+- ✅ Mock DXF overlay (2-3 road vectors)
+- ✅ Feature list and download functionality
+- ✅ Complete workflow concept
+
+**What's Documented (Not Implemented):**
+- ⏳ Grounding DINO + SAM 2 architecture
+- ⏳ Vectorization strategy (skeletonization + Douglas-Peucker)
+- ⏳ DXF generation with ezdxf
+- ⏳ Memory management for SAM 2
+
+### Implementation Plan (1 Hour)
+
+**Created**: `.kiro/steering/pivot-02.md` with detailed implementation plan
+
+**Tasks:**
+1. Create mock DXF data (10 min) - 3 simple road features in EPSG:6405
+2. Add vector layer to map (20 min) - OpenLayers vector overlay
+3. Update DXF pane (15 min) - Show features in list
+4. Add legend (5 min) - Red = centerline, blue = curb
+5. Update README (10 min) - Explain demo status and post-hackathon plan
+
+**Total**: 60 minutes
+
+### Lessons Learned
+
+**For Future Hackathons:**
+1. **Environment matters**: Research projects require Linux, not Windows
+2. **WSL is essential**: Should have set up WSL at start, not avoided it
+3. **Dependency hell is real**: Version conflicts consume massive time
+4. **Plan for failure**: Should have had static demo as backup from start
+5. **Time-box debugging**: 30-minute rule - if not working, pivot
+
+**For Production:**
+1. **Use stable packages**: Avoid research repos in production
+2. **Docker everything**: Eliminates environment issues
+3. **Test early**: Run ML pipeline on day 1, not last 3 hours
+4. **Have fallbacks**: Always have a simpler demo ready
+
+**What Went Right:**
+- ✅ COG rendering worked perfectly (geotiff.js is production-ready)
+- ✅ OpenLayers integration smooth (mature library)
+- ✅ React + TypeScript + Vite stack solid (no issues)
+- ✅ Kiro CLI workflow excellent (custom commands saved hours)
+- ✅ Documentation comprehensive (judges will understand vision)
+
+**What Went Wrong:**
+- ❌ Assumed Windows would work (should have used Linux VM)
+- ❌ Left ML pipeline to last 3 hours (should have tested day 1)
+- ❌ No backup plan (should have had static demo ready)
+- ❌ Underestimated research project complexity
+
+### Next Steps
+
+1. **Execute PIVOT 02 plan** (1 hour) - Implement mock overlay
+2. **Update README** (10 min) - Clear demo status explanation
+3. **Record video** (5 min) - Show concept and architecture
+4. **Submit early** (before deadline) - Don't repeat last hackathon
+
+**Time Remaining**: 3 hours to submission
+
+**Progress**: 4/12 Demo features completed (33.3%), pivoting to static demo
+
+---
+
+**Status**: ML pipeline abandoned, static demo strategy in place. 3 hours to submission. Focus on visible overlay. 🚀
